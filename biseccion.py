@@ -28,7 +28,7 @@ def biseccion(f,a,b,err,max_i):
     return x
 
 def mostrar_info():
-    st.subheader('Metodo Bisección')
+    st.header('Metodo Bisección')
     
     formula = st.text_input('Escribe tu función $f(x)$:', value='x**2 + 11*x - 6')
     st.caption("Usa `**` para potencias (ej: `x**2`) y `*` para productos. También puedes usar `sin(x)`, `exp(x)`, etc.")
@@ -71,17 +71,17 @@ def mostrar_info():
     
     st.subheader('Código hecho en Python')
     st.code('''
-            def biseccion(a,b,err,max_i):
-            # Casos base
-            if f(a)*f(b)>0:
-                return None
-            x = (a+b)/2
-            if abs(f(x)) < err or max_i<=0: 
-                return x
-            # Opciones
-            if f(x) * f(a) < 0:
-                x = biseccion(a,x,err,max_i-1)
-            else:
-                x = biseccion(x,b,err,max_i-1)
-            return x''',
+def biseccion(a,b,err,max_i):
+# Casos base
+if f(a)*f(b)>0:
+    return None
+x = (a+b)/2
+if abs(f(x)) < err or max_i<=0: 
+    return x
+# Opciones
+if f(x) * f(a) < 0:
+    x = biseccion(a,x,err,max_i-1)
+else:
+    x = biseccion(x,b,err,max_i-1)
+return x''',
             "python")
