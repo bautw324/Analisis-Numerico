@@ -1,10 +1,11 @@
 import streamlit as st
-import matplotlib.pyplot as plt
 import numpy as np
 import utils as ec
 import pandas as pd
+import plotly.graph_objects as go
+import grafico
 
-def biseccion(f,a,b,err,max_i):
+def biseccion(f,a,b,err):
     cuadro = {
     'a[i]':[],
     'b[i]':[],
@@ -23,7 +24,8 @@ def biseccion(f,a,b,err,max_i):
         fa, fb = fb, fa
     
     # Calculo de la raíz
-    for _ in range(1, max_i+1):
+    x_anteior = a
+    while True:
         x = (a+b)/2
         fx = ec.evaluar_f(f,x)
 
@@ -33,8 +35,12 @@ def biseccion(f,a,b,err,max_i):
         cuadro['f(x[i])'].append(fx)
         cuadro['Dx[i]'].append(x-a)
 
-        if abs(fx) < err or max_i<=0: 
+        if abs(fx) < err: 
             return x, cuadro
+        if round(x,6) == round(x_anteior,6):
+            break
+        
+        x_anteior = x
         
         # Opciones
         if fx * fa < 0:
@@ -50,39 +56,32 @@ def mostrar_info():
     st.header('Metodo Bisección')
     
     formula = st.text_input('Escribe tu función $f(x)$:', value='x**2 + 11*x - 6')
-    st.caption("Usa `**` para potencias (ej: `x**2`) y `*` para productos. También puedes usar `sin(x)`, `exp(x)`, etc.")
     
     st.latex(ec.mostrar_formula(formula))
     
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
     with col1:
-        inf = st.number_input('Ingresar intervalo inferior',value=-10.0,step=2.0)
-        sup = st.number_input('Ingresar intervalo superior',value=10.0,step=2.0)
+        inf = st.number_input('Ingresar intervalo inferior',value=-5.0,step=2.0)
     with col2:
-        max_i = st.number_input('Ingresar cantidad de iteraciones',min_value=1,max_value=30,value=10)
-        err = st.number_input('Exponente de tolerancia de error $E = 10^{-n}$',value=2,min_value=1, max_value=10)
+        sup = st.number_input('Ingresar intervalo superior',value=5.0,step=2.0)
+    with col3:
+        err = st.number_input('Tolerancia de error $E = 10^{-n}$',value=2,min_value=1, max_value=10)
         err = 10**(-err)
     try:
-        x = np.linspace(inf, sup, 100)
-        y = ec.evaluar_f(formula,x)
+        raiz, datos = biseccion(formula,inf,sup,err)
         
-        fig, ax = plt.subplots()
-        p_x, datos = biseccion(formula,inf,sup,err,max_i)
-        
-        if p_x is not None:
-            ax.scatter(p_x,0.0,color='green', s=30, zorder=5, label="Punto aproximado")
-            st.success(f'Raíz encontrada en: $$x ≈ {round(p_x,6)}$$')
+        if raiz is not None:
+            st.success(f'Raíz encontrada en: $$x ≈ {round(raiz,6)}$$')
 
-            ax.plot(x, y, label='$f (x)$', color='skyblue', linewidth=2)
-            ax.set_xlabel("Eje X")
-            ax.set_ylabel("Eje Y")
-            ax.legend()
-            ax.grid(True)
-            
-            # Mostrar la figura en Streamlit
-            st.pyplot(fig)
-
+            st.plotly_chart(
+                grafico.dibujar(formula,raiz,inf,sup),
+                config={
+                'scrollZoom': False,
+                'staticPlot': False
+            })
+                
             mostrar_datos = st.checkbox("Mostrar datos de iteraciones")
+            
             if mostrar_datos:
                 st.dataframe(pd.DataFrame(datos))
         else:
