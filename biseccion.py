@@ -71,8 +71,7 @@ def mostrar_info():
         
         if p_x is not None:
             ax.scatter(p_x,0.0,color='green', s=30, zorder=5, label="Punto aproximado")
-            st.success(f'Raíz encontrada en: $$x ≈ {p_x}$$')
-            # st.balloons()
+            st.success(f'Raíz encontrada en: $$x ≈ {round(p_x,6)}$$')
 
             ax.plot(x, y, label='$f (x)$', color='skyblue', linewidth=2)
             ax.set_xlabel("Eje X")
