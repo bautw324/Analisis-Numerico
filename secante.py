@@ -1,6 +1,5 @@
 import streamlit as st
 import grafico
-import numpy as np
 import utils as ec
 import pandas as pd
 
@@ -58,7 +57,7 @@ def mostrar_info():
     st.header('Metodo Secante')
     
     formula = st.text_input('Escribe tu función $f(x)$:', value='x**2 + 11*x - 6')
-    st.caption("Usa `**` para potencias (ej: `x**2`) y `*` para productos. También puedes usar `sin(x)`, `exp(x)`, etc.")
+    st.caption("Usa `( )` para agrupar elementos. Por ejemplo `e^(1-x)` para $$ e^{1-x}$$.")
     
     st.latex(ec.mostrar_formula(formula))
     

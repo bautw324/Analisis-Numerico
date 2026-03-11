@@ -1,5 +1,4 @@
 import streamlit as st
-import numpy as np
 import utils as ec
 import pandas as pd
 import plotly.graph_objects as go
@@ -56,6 +55,7 @@ def mostrar_info():
     st.header('Metodo Bisección')
     
     formula = st.text_input('Escribe tu función $f(x)$:', value='x**2 + 11*x - 6')
+    st.caption("Usa `( )` para agrupar elementos. Por ejemplo `e^(1-x)` para $$ e^{1-x}$$.")
     
     st.latex(ec.mostrar_formula(formula))
     
