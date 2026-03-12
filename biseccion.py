@@ -1,7 +1,6 @@
 import streamlit as st
 import utils as ec
 import pandas as pd
-import plotly.graph_objects as go
 import grafico, comparativa
 
 def biseccion(f,a,b,err):

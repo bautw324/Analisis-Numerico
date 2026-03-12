@@ -1,6 +1,5 @@
 import streamlit as st
 import grafico
-import utils as ec
 import pandas as pd
 import biseccion, secante
 

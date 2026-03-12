@@ -6,3 +6,4 @@ matplotlib
 numpy
 sympy
 plotly
+streamlit_lottie
