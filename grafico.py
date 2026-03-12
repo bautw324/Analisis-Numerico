@@ -3,7 +3,7 @@ import streamlit as st
 import numpy as np
 import utils as ec
 
-def dibujar(f, raiz, inf, sup):
+def dibujar(f, raiz, inf, sup, key=None):
     # Calculamos la distancia más larga desde la raíz a los extremos
     # para que al usarla en ambos lados, la raíz quede en el centro exacto.
     distancia_a_inf = abs(raiz - inf)
@@ -34,6 +34,22 @@ def dibujar(f, raiz, inf, sup):
         name='Raíz Aproximada',
         marker=dict(size=12, color='#00E676', line=dict(color='white', width=2))
     ))
+    
+    # Línea punteada para el límite inferior 'a'
+    fig.add_vline(
+        x=inf, 
+        line_width=2, 
+        line_dash="dash",
+        line_color="rgba(30, 136, 229, 0.5)"
+    )
+
+    # Línea punteada para el límite superior 'b'
+    fig.add_vline(
+        x=sup, 
+        line_width=2, 
+        line_dash="dash", 
+        line_color="rgba(30, 136, 229, 0.5)"
+    )
 
     fig.update_layout(
         template='plotly_white',
@@ -62,7 +78,8 @@ def dibujar(f, raiz, inf, sup):
     )
     st.plotly_chart(
                 fig, 
-                use_container_width=True, 
+                use_container_width=True,
+                key=key,
                 config={
                     'scrollZoom': False,
                     'displayModeBar': True,

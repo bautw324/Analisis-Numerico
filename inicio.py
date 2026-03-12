@@ -1,22 +1,35 @@
 import streamlit as st
 import pandas as pd
+from streamlit_lottie import st_lottie
+import json
 
+def cargar_lottie_local(ruta_archivo: str):
+    with open(ruta_archivo, "r", encoding="utf-8") as f:
+        return json.load(f)
 def inicio():
-    st.header('Bienvenidos a la App de Análisis Numérico')
-    st.write("""
-    Esta aplicación está diseñada para ayudarte a comprender y aplicar métodos numéricos fundamentales. 
-    Aquí podrás explorar diferentes técnicas y visualizar resultados implementados en Python.
-    
-    Navega por los módulos disponibles en el menú para comenzar tu viaje en el análisis numérico.""")
-
-    st.header('Introducción del Grupo')
+    lottie_welcome = cargar_lottie_local("animaciones/Welcome.json")
+    st.markdown('<div style="display: flex; justify-content: center;">', unsafe_allow_html=True)
+    if lottie_welcome:
         
+        st_lottie(
+            lottie_welcome,
+            speed=1,
+            reverse=False,
+            loop=True,
+            quality="low",
+            height=200, 
+            width=None, 
+            key="large_welcome_animation",
+        )
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    #st.header('Introducción')
     st.write("""
-    - **Materia:** Análisis Numérico    
-    - **Docente:** Mauricio Orellana  
+    - **Materia:** Análisis Numérico
+    - **Docente:** Mauricio Orellana
     - **Objetivo general:** Desarrollar, implementar y analizar métodos numéricos aplicados a problemas reales.
     """)
-
+    
     st.divider()
 
     st.header("👥 Integrantes del Equipo")

@@ -1,6 +1,7 @@
 import streamlit as st
 from streamlit_pdf_viewer import pdf_viewer
 import inicio, biseccion, secante
+import json
 
 st.set_page_config(
     page_title='App Análisis Numerico',

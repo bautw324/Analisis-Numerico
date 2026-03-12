@@ -1,6 +1,5 @@
 import streamlit as st
-import grafico
-import numpy as np
+import grafico, comparativa
 import utils as ec
 import pandas as pd
 
@@ -58,7 +57,7 @@ def mostrar_info():
     st.header('Metodo Secante')
     
     formula = st.text_input('Escribe tu función $f(x)$:', value='x**2 + 11*x - 6')
-    st.caption("Usa `**` para potencias (ej: `x**2`) y `*` para productos. También puedes usar `sin(x)`, `exp(x)`, etc.")
+    st.caption("Usa `( )` para agrupar elementos. Por ejemplo `e^(1-x)` para $$ e^{1-x}$$.")
     
     st.latex(ec.mostrar_formula(formula))
     
@@ -74,13 +73,19 @@ def mostrar_info():
         raiz, datos = secante(formula,inf,sup,err)
         
         if raiz is not None:
-            st.success(f'Raíz encontrada en: $$x ≈ {round(raiz,6)}$$')
+            comparar = st.checkbox("Comparar con Bisección")
+            
+            if comparar:
+                comparativa.comparar_sec_bis(formula,inf,sup,err)
+            else:
+                st.success(f'Raíz encontrada en: $$x ≈ {round(raiz,6)}$$')
 
-            grafico.dibujar(formula, raiz, inf, sup)
-
-            mostrar_datos = st.checkbox("Mostrar datos de iteraciones")
-            if mostrar_datos:
-                st.dataframe(pd.DataFrame(datos))
+                grafico.dibujar(formula, raiz, inf, sup,key="grafico_unico")
+                    
+                mostrar_datos = st.checkbox("Mostrar datos de iteraciones")
+                
+                if mostrar_datos:
+                    st.dataframe(pd.DataFrame(datos))
         else:
             st.error('No se ha encontrado la raíz.')
 
