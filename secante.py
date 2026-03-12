@@ -54,6 +54,12 @@ def secante(f,a,b,err):
     return x, cuadro
 
 def mostrar_info():
+
+    # Botón para volver al menú principal
+    if st.button("⬅️ Volver al Inicio"):
+        st.session_state.pagina_actual = "Inicio"
+        st.rerun() # Esto fuerza a la página a recargarse instantáneamente
+
     st.header('Metodo Secante')
     
     formula = st.text_input('Escribe tu función $f(x)$:', value='x**2 + 11*x - 6')
