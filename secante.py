@@ -73,18 +73,21 @@ def mostrar_info():
         raiz, datos = secante(formula,inf,sup,err)
         
         if raiz is not None:
-            comparar = st.checkbox("Comparar con Bisección")
-            
-            if comparar:
-                comparativa.comparar_sec_bis(formula,inf,sup,err)
+            opcion = ["Comparar con Biseccion", "Mostrar datos de iteraciones"]
+            seleccion = st.pills(
+                label="Selecciona una opción:", 
+                options=opcion, 
+                key="pills_bis", 
+                selection_mode='multi'
+                )
+            if "Comparar con Biseccion" in seleccion:
+                comparativa.comparar_sec_bis(formula,inf,sup,err, "Mostrar datos de iteraciones" in seleccion)
             else:
                 st.success(f'Raíz encontrada en: $$x ≈ {round(raiz,6)}$$')
 
-                grafico.dibujar(formula, raiz, inf, sup,key="grafico_unico")
-                    
-                mostrar_datos = st.checkbox("Mostrar datos de iteraciones")
+                grafico.dibujar(formula, raiz, inf, sup,key="grafico_unico", iteraciones=datos if ("Mostrar datos de iteraciones" in seleccion) else None)
                 
-                if mostrar_datos:
+                if "Mostrar datos de iteraciones" in seleccion:
                     st.dataframe(pd.DataFrame(datos))
         else:
             st.error('No se ha encontrado la raíz.')

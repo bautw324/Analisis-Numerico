@@ -3,7 +3,7 @@ import streamlit as st
 import numpy as np
 import utils as ec
 
-def dibujar(f, raiz, inf, sup, key=None):
+def dibujar(f, raiz, inf, sup, key=None, iteraciones=None):
     # Calculamos la distancia más larga desde la raíz a los extremos
     # para que al usarla en ambos lados, la raíz quede en el centro exacto.
     distancia_a_inf = abs(raiz - inf)
@@ -26,6 +26,33 @@ def dibujar(f, raiz, inf, sup, key=None):
         name='f(x)', 
         line=dict(color='#1E88E5', width=3)
     ))
+
+    if iteraciones is not None and 'x[i]' in iteraciones:
+        x_puntos = iteraciones['x[i]'][:-1]  # Excluimos el último punto que es la raíz aproximada
+        # Creamos los índices dinámicos: x_0, x_1, x_2...
+        etiquetas = [f"x_{i}" for i in range(len(x_puntos))]
+        
+        fig.add_trace(go.Scatter(
+            x=x_puntos,
+            y=[0] * len(x_puntos), # <--- ESTO las mantiene sobre el eje X
+            mode='markers',
+            text=etiquetas,
+            textposition="top center", # Las etiquetas quedan arriba de la 'x'
+            name='Rastro x_i',
+            marker=dict(
+                symbol='x', 
+                size=10, 
+                color='#EF4444', # Rojo vibrante para resaltar
+                line=dict(color='white', width=1)
+            ),
+            textfont=dict(
+                family="Inter, sans-serif",
+                size=9,
+                color="#EF4444"
+            ),
+            # Evita que el cartelito de hover sea molesto
+            hovertemplate="Iteración %{text}: %{x:.6f}<extra></extra>"
+        ))
 
     # Raíz (El centro del mundo)
     fig.add_trace(go.Scatter(

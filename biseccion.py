@@ -23,7 +23,8 @@ def biseccion(f,a,b,err):
     
     # Calculo de la raíz
     x_anterior = a
-    while True:
+    i=0
+    while i < 100:
         x = round((a+b)/2,6)
         fx = ec.evaluar_f(f,x)
 
@@ -47,10 +48,12 @@ def biseccion(f,a,b,err):
         else:
             a = x
             fa = fx
+        i+=1
 
     return x, cuadro
 
 def mostrar_info():
+
     st.header('Metodo Bisección')
     
     formula = st.text_input('Escribe tu función $f(x)$:', value='x**2 + 11*x - 6')
@@ -70,17 +73,21 @@ def mostrar_info():
         raiz, datos = biseccion(formula,inf,sup,err)
 
         if raiz is not None:
-            comparar = st.checkbox("Comparar con Secante")
-            if comparar:
-                comparativa.comparar_sec_bis(formula,inf,sup,err)
+            opcion = ["Comparar con Secante", "Mostrar datos de iteraciones"]
+            seleccion = st.pills(
+                label="Selecciona una opción:", 
+                options=opcion, 
+                key="pills_bis", 
+                selection_mode='multi'
+                )
+            if "Comparar con Secante" in seleccion:
+                comparativa.comparar_sec_bis(formula,inf,sup,err, "Mostrar datos de iteraciones" in seleccion)
             else:
                 st.success(f'Raíz encontrada en: $$x ≈ {round(raiz,6)}$$')
-
-                grafico.dibujar(formula, raiz, inf, sup,key="grafico_unico")
                     
-                mostrar_datos = st.checkbox("Mostrar datos de iteraciones")
+                grafico.dibujar(formula, raiz, inf, sup,key="grafico_unico", iteraciones=datos if ("Mostrar datos de iteraciones" in seleccion) else None)
                 
-                if mostrar_datos:
+                if "Mostrar datos de iteraciones" in seleccion:
                     st.dataframe(pd.DataFrame(datos))          
         else:
             st.error('No se ha encontrado la raíz.')
