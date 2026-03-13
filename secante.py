@@ -3,6 +3,7 @@ import grafico, comparativa
 import utils as ec
 import pandas as pd
 
+@st.cache_data(show_spinner="Calculando telemetría...")
 def secante(f,a,b,err):
     cuadro = {
     'a[i]':[],
@@ -34,11 +35,11 @@ def secante(f,a,b,err):
         if round(x,6) == round(valor_anterior,6):
             break
         
-        cuadro['a[i]'].append(a)
-        cuadro['b[i]'].append(b)
-        cuadro['x[i]'].append(x)
-        cuadro['f(x[i])'].append(fx)
-        cuadro['Dx[i]'].append(x-a)
+        cuadro['a[i]'].append(f'{a:.6f}')
+        cuadro['b[i]'].append(f'{b:.6f}')
+        cuadro['x[i]'].append(f'{x:.6f}')
+        cuadro['f(x[i])'].append(f'{fx:.6f}')
+        cuadro['Dx[i]'].append(f'{x-a:.6f}')
 
         if abs(fx) < err: 
             return x, cuadro

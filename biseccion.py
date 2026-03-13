@@ -3,6 +3,7 @@ import utils as ec
 import pandas as pd
 import grafico, comparativa
 
+@st.cache_data(show_spinner="Calculando telemetría...")
 def biseccion(f,a,b,err):
     cuadro = {
     'a[i]':[],
@@ -28,11 +29,11 @@ def biseccion(f,a,b,err):
         x = round((a+b)/2,6)
         fx = ec.evaluar_f(f,x)
 
-        cuadro['a[i]'].append(a)
-        cuadro['b[i]'].append(b)
-        cuadro['x[i]'].append(x)
-        cuadro['f(x[i])'].append(fx)
-        cuadro['Dx[i]'].append(x-a)
+        cuadro['a[i]'].append(f'{a:.6f}')
+        cuadro['b[i]'].append(f'{b:.6f}')
+        cuadro['x[i]'].append(f'{x:.6f}')
+        cuadro['f(x[i])'].append(f'{fx:.6f}')
+        cuadro['Dx[i]'].append(f'{x-a:.6f}')
 
         if abs(fx) < err: 
             return x, cuadro
@@ -88,7 +89,7 @@ def mostrar_info():
                 grafico.dibujar(formula, raiz, inf, sup,key="grafico_unico", iteraciones=datos if ("Mostrar datos de iteraciones" in seleccion) else None)
                 
                 if "Mostrar datos de iteraciones" in seleccion:
-                    st.dataframe(pd.DataFrame(datos))          
+                    st.dataframe(pd.DataFrame(datos),use_container_width=True)          
         else:
             st.error('No se ha encontrado la raíz.')
 
