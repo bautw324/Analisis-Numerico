@@ -145,34 +145,75 @@ def mostrar_info():
     
         
     try:
-        raiz, datos = newton(x_n,formula,err)
+        raiz, datos = newton(x_n, formula, err)
 
         if raiz is not None:
-            comparar = st.checkbox("Comparar con Secante")
-            if comparar:
-                comparativa.comparar_sec_bis(formula,inf,err)
-                
-            else:
-                st.success(f'Raíz encontrada en: $$x ≈ {round(raiz,6)}$$')
+            # 1. Pastillitas de selección única para comparar
+            opciones_comp = ["Bisección", "Secante"]
+            seleccion = st.pills(
+                label="Comparar con:", 
+                options=opciones_comp, 
+                key="pills_newton", 
+                selection_mode='single' # ¡Solo deja elegir uno a la vez!
+            )
+            
+            # 2. El checkbox de los datos bien separadito abajo
+            mostrar_datos = st.checkbox("Mostrar datos de iteraciones")
 
-                # Le inventamos un margen de 5 unidades para izquierda y derecha de la raíz
-                inf = raiz - 5
-                sup = raiz + 5
-                grafico.dibujar(formula, raiz, inf, sup, key="grafico_newton")
-                    
-                mostrar_datos = st.checkbox("Mostrar datos de iteraciones")
+            # 3. Lógica de comparación
+            if seleccion: # Si eligió alguna de las opciones
+                st.info(f"Para comparar con {seleccion}, necesitamos un intervalo inicial:")
+                col_c1, col_c2 = st.columns(2)
+                with col_c1:
+                    inf = st.number_input('Ingresar intervalo inferior', value=x_n - 5.0, step=1.0)
+                with col_c2:
+                    sup = st.number_input('Ingresar intervalo superior', value=x_n + 5.0, step=1.0)
+
+                comparativa.comparar_generico("Newton", seleccion, formula, err, mostrar_datos, x_n=x_n, inf=inf, sup=sup)
+
+            else: # Si no eligió nada, muestra solo Newton
+                st.success(f'Raíz encontrada en: $$x \\approx {round(raiz,6)}$$')
+                inf_grafico = raiz - 5
+                sup_grafico = raiz + 5
+                grafico.dibujar(formula, raiz, inf_grafico, sup_grafico, key="graf_unico_newton", iteraciones=datos if mostrar_datos else None)
                 
                 if mostrar_datos:
-                    st.dataframe(pd.DataFrame(datos))          
+                    st.dataframe(pd.DataFrame(datos), use_container_width=True)          
         else:
-            st.error('No se ha encontrado la raíz.')
+            st.error('No se ha encontrado la raíz o la derivada se hizo cero.')
 
     except Exception as e:
         st.error(f'Error en la fórmula: {e}')
         st.info('Escribe la fórmula correctamente. Ejemplo: `x**2 + 11*x - 6`')
 
 
+    st.divider()
+    st.header('Código hecho en Python')
+    st.code('''
+def newton(x_n,f,err):
+    
+    while True:
+        fa = ec.evaluar_f(f, x_n)
+        derivada = str(sp.diff(f, 'x'))
+        d_evaluada = round(ec.evaluar_f(derivada, x_n), 6)
+        
+        # Evitamos la división por cero si la derivada da 0
+        if d_evaluada == 0:
+            return None, cuadro
+            
+        x_n1 = round(x_n - fa / d_evaluada, 6)
+
+        # Condición de corte
+        if abs(ec.evaluar_f(f, x_n1)) <= err:
+            return x_n1, cuadro
+        
+        # Condición de corte por si se estanca
+        if x_n == x_n1:
+            return x_n1, cuadro
+        
+        x_n = x_n1''',
+            "python")
 
 
 
-#print(newton(x_n,f,err))
+
