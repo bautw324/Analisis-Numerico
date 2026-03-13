@@ -1,7 +1,6 @@
 import streamlit as st
 from streamlit_pdf_viewer import pdf_viewer
 import inicio, biseccion, secante
-import json
 import newton
 
 st.set_page_config(
@@ -12,7 +11,7 @@ st.set_page_config(
 mostrar_tp = False
 
 def main():
-    
+
     """st.title('App Análisis Numérico 📊')
 
     choice = st.segmented_control(

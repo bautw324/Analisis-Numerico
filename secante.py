@@ -5,6 +5,7 @@ import pandas as pd
 import base64
 import streamlit.components.v1 as components
 
+@st.cache_data(show_spinner="Calculando telemetría...")
 def secante(f,a,b,err):
     cuadro = {
     'a[i]':[],
@@ -36,11 +37,11 @@ def secante(f,a,b,err):
         if round(x,6) == round(valor_anterior,6):
             break
         
-        cuadro['a[i]'].append(a)
-        cuadro['b[i]'].append(b)
-        cuadro['x[i]'].append(x)
-        cuadro['f(x[i])'].append(fx)
-        cuadro['Dx[i]'].append(x-a)
+        cuadro['a[i]'].append(f'{a:.6f}')
+        cuadro['b[i]'].append(f'{b:.6f}')
+        cuadro['x[i]'].append(f'{x:.6f}')
+        cuadro['f(x[i])'].append(f'{fx:.6f}')
+        cuadro['Dx[i]'].append(f'{x-a:.6f}')
 
         if abs(fx) < err: 
             return x, cuadro
@@ -160,18 +161,21 @@ def mostrar_info():
         raiz, datos = secante(formula,inf,sup,err)
         
         if raiz is not None:
-            comparar = st.checkbox("Comparar con Bisección")
-            
-            if comparar:
-                comparativa.comparar_sec_bis(formula,inf,sup,err)
+            opcion = ["Comparar con Biseccion", "Mostrar datos de iteraciones"]
+            seleccion = st.pills(
+                label="Selecciona una opción:", 
+                options=opcion, 
+                key="pills_bis", 
+                selection_mode='multi'
+                )
+            if "Comparar con Biseccion" in seleccion:
+                comparativa.comparar_sec_bis(formula,inf,sup,err, "Mostrar datos de iteraciones" in seleccion)
             else:
                 st.success(f'Raíz encontrada en: $$x ≈ {round(raiz,6)}$$')
 
-                grafico.dibujar(formula, raiz, inf, sup,key="grafico_unico")
-                    
-                mostrar_datos = st.checkbox("Mostrar datos de iteraciones")
+                grafico.dibujar(formula, raiz, inf, sup,key="grafico_unico", iteraciones=datos if ("Mostrar datos de iteraciones" in seleccion) else None)
                 
-                if mostrar_datos:
+                if "Mostrar datos de iteraciones" in seleccion:
                     st.dataframe(pd.DataFrame(datos))
         else:
             st.error('No se ha encontrado la raíz.')

@@ -5,6 +5,7 @@ import grafico, comparativa
 import base64
 import streamlit.components.v1 as components
 
+@st.cache_data(show_spinner="Calculando telemetría...")
 def biseccion(f,a,b,err):
     cuadro = {
     'a[i]':[],
@@ -25,15 +26,16 @@ def biseccion(f,a,b,err):
     
     # Calculo de la raíz
     x_anterior = a
-    while True:
+    i=0
+    while i < 100:
         x = round((a+b)/2,6)
         fx = ec.evaluar_f(f,x)
 
-        cuadro['a[i]'].append(a)
-        cuadro['b[i]'].append(b)
-        cuadro['x[i]'].append(x)
-        cuadro['f(x[i])'].append(fx)
-        cuadro['Dx[i]'].append(x-a)
+        cuadro['a[i]'].append(f'{a:.6f}')
+        cuadro['b[i]'].append(f'{b:.6f}')
+        cuadro['x[i]'].append(f'{x:.6f}')
+        cuadro['f(x[i])'].append(f'{fx:.6f}')
+        cuadro['Dx[i]'].append(f'{x-a:.6f}')
 
         if abs(fx) < err: 
             return x, cuadro
@@ -49,6 +51,7 @@ def biseccion(f,a,b,err):
         else:
             a = x
             fa = fx
+        i+=1
 
     return x, cuadro
 
@@ -61,6 +64,7 @@ def img_to_base64(path):
 
 def mostrar_info():
 
+<<<<<<< HEAD
     # 1. Plantamos una bandera invisible bien arriba
     st.markdown("<span id='banderita-tope'></span>", unsafe_allow_html=True)
 
@@ -138,6 +142,8 @@ def mostrar_info():
         st.session_state.pagina_actual = "Inicio"
         st.rerun() # Esto fuerza a la página a recargarse instantáneamente
 
+=======
+>>>>>>> f4431d69df8295478151a6335b022702da6ca7a4
     st.header('Metodo Bisección')
     
     formula = st.text_input('Escribe tu función $f(x)$:', value='x**2 + 11*x - 6')
@@ -157,18 +163,22 @@ def mostrar_info():
         raiz, datos = biseccion(formula,inf,sup,err)
 
         if raiz is not None:
-            comparar = st.checkbox("Comparar con Secante")
-            if comparar:
-                comparativa.comparar_sec_bis(formula,inf,sup,err)
+            opcion = ["Comparar con Secante", "Mostrar datos de iteraciones"]
+            seleccion = st.pills(
+                label="Selecciona una opción:", 
+                options=opcion, 
+                key="pills_bis", 
+                selection_mode='multi'
+                )
+            if "Comparar con Secante" in seleccion:
+                comparativa.comparar_sec_bis(formula,inf,sup,err, "Mostrar datos de iteraciones" in seleccion)
             else:
                 st.success(f'Raíz encontrada en: $$x ≈ {round(raiz,6)}$$')
-
-                grafico.dibujar(formula, raiz, inf, sup,key="grafico_unico")
                     
-                mostrar_datos = st.checkbox("Mostrar datos de iteraciones")
+                grafico.dibujar(formula, raiz, inf, sup,key="grafico_unico", iteraciones=datos if ("Mostrar datos de iteraciones" in seleccion) else None)
                 
-                if mostrar_datos:
-                    st.dataframe(pd.DataFrame(datos))          
+                if "Mostrar datos de iteraciones" in seleccion:
+                    st.dataframe(pd.DataFrame(datos),use_container_width=True)          
         else:
             st.error('No se ha encontrado la raíz.')
 
