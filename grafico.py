@@ -4,7 +4,7 @@ import numpy as np
 import utils as ec
 
 @st.cache_data(show_spinner="Cargando trazado de la curva...")
-def generar_base_fig(f, raiz, inf, sup):
+def generar_base_fig(f, raiz, inf, sup,key=None):
     # Calculamos la distancia más larga desde la raíz a los extremos
     # para que al usarla en ambos lados, la raíz quede en el centro exacto.
     radio_vista = max(abs(raiz - inf), abs(raiz - sup))
@@ -23,22 +23,29 @@ def generar_base_fig(f, raiz, inf, sup):
         name='f(x)', 
         line=dict(color='#1E88E5', width=3)
     ))
-    
-    # Línea punteada para el límite inferior 'a'
-    fig.add_vline(
-        x=inf, 
-        line_width=2, 
-        line_dash="dash",
-        line_color="rgba(30, 136, 229, 0.5)"
-    )
+    if key == 'grafico_pf':
+        fig.add_trace(go.Scatter(
+            x=x, y=x, # y = x
+            mode='lines',
+            name='y = x',
+            line=dict(color='#FFCA28', width=2, dash='dash')
+        ))
+    else:
+        # Línea punteada para el límite inferior 'a'
+        fig.add_vline(
+            x=inf, 
+            line_width=2, 
+            line_dash="dash",
+            line_color="rgba(30, 136, 229, 0.5)"
+        )
 
-    # Línea punteada para el límite superior 'b'
-    fig.add_vline(
-        x=sup, 
-        line_width=2, 
-        line_dash="dash", 
-        line_color="rgba(30, 136, 229, 0.5)"
-    )
+        # Línea punteada para el límite superior 'b'
+        fig.add_vline(
+            x=sup, 
+            line_width=2, 
+            line_dash="dash", 
+            line_color="rgba(30, 136, 229, 0.5)"
+        )
 
     fig.update_layout(
         template='plotly_white',
@@ -71,40 +78,74 @@ def generar_base_fig(f, raiz, inf, sup):
 
 def dibujar(f, raiz, inf, sup, key=None, iteraciones=None):
     # Traemos la base del caché (instantáneo si no cambió f o el intervalo)
-    fig = generar_base_fig(f, raiz, inf, sup)
+    fig = generar_base_fig(f, raiz, inf, sup,key)
     
     # Creamos una COPIA para no ensuciar el objeto original en el caché
     fig_final = go.Figure(fig)
-
-    # Agregamos la "Telemetría" (las x rojas) solo si es necesario
-    if iteraciones is not None and 'x[i]' in iteraciones:
-        x_puntos = iteraciones['x[i]'][:-1]
-        etiquetas = [f"x_{i}" for i in range(len(x_puntos))]
-        fig_final.add_trace(go.Scatter(
-            x=x_puntos,
-            y=[0] * len(x_puntos),
-            mode='markers',
-            text=etiquetas,
-            textposition="top center",
-            name='Rastro x_i',
-            marker=dict(symbol='x', size=10, color='#EF4444'),
-            hovertemplate="Iteración %{text}: %{x:.6f}<extra></extra>"
-        ))
     
-    # Agregamos la Raíz final
-    fig_final.add_trace(go.Scatter(
-        x=[raiz], y=[0],
-        mode='markers',
-        name='Raíz',
-        marker=dict(
-            size=12, 
-            color='#00E676', 
-            line=dict(
-                color='white', 
-                width=2
-                )
+    if key == 'grafico_pf':
+        
+        # Telemetría: Las iteraciones
+        if iteraciones is not None and 'x[i]' in iteraciones:
+            # Convertimos a float por si vienen como strings desde tu tabla
+            x_puntos = [float(val) for val in iteraciones['x[i]'][:-1]] 
+            
+            # En punto fijo, los puntos van sobre la curva g(x), en Newton sobre el eje X
+            y_puntos = ec.evaluar_f(f, np.array(x_puntos))
+
+            etiquetas = [f"x_{i}" for i in range(len(x_puntos))]
+            fig_final.add_trace(go.Scatter(
+                x=x_puntos,
+                y=y_puntos,
+                mode='markers',
+                text=etiquetas,
+                textposition="top center",
+                name='Iteraciones x_i',
+                marker=dict(symbol='x', size=10, color='#EF4444'),
+                hovertemplate="Iteración %{text}: %{x:.6f}<extra></extra>"
+            ))
+        
+        # Agregamos el punto final (La Raíz)
+        # En Punto Fijo la intersección visual es en (raiz, raiz). En Newton es (raiz, 0).
+        fig_final.add_trace(go.Scatter(
+            x=[raiz], y=[raiz],
+            mode='markers',
+            name='Punto de Convergencia',
+            marker=dict(
+                size=12, 
+                color='#00E676', 
+                line=dict(color='white', width=2)
             )
-    ))
+        ))
+    else:
+        # Agregamos la "Telemetría" (las x rojas) solo si es necesario
+        if iteraciones is not None and 'x[i]' in iteraciones:
+            x_puntos = iteraciones['x[i]'][:-1]
+            etiquetas = [f"x_{i}" for i in range(len(x_puntos))]
+            fig_final.add_trace(go.Scatter(
+                x=x_puntos,
+                y=[0] * len(x_puntos),
+                mode='markers',
+                text=etiquetas,
+                textposition="top center",
+                name='Rastro x_i',
+                marker=dict(symbol='x', size=10, color='#EF4444'),
+                hovertemplate="Iteración %{text}: %{x:.6f}<extra></extra>"
+            ))
+        # Agregamos la Raíz final
+        fig_final.add_trace(go.Scatter(
+            x=[raiz], y=[0],
+            mode='markers',
+            name='Raíz',
+            marker=dict(
+                size=12, 
+                color='#00E676', 
+                line=dict(
+                    color='white', 
+                    width=2
+                    )
+                )
+        ))
     # Finalmente, mostramos el gráfico unificado
     st.plotly_chart(
         fig_final,
@@ -123,110 +164,3 @@ def dibujar(f, raiz, inf, sup, key=None, iteraciones=None):
                 ]]
             }
         )
-    
-# def dibujar_abierto(f, raiz, x0, key=None, iteraciones=None, es_punto_fijo=False):
-#     # Usamos x0 en lugar de inf y sup
-#     fig = generar_base_fig_abierto(f, raiz, x0, es_punto_fijo)
-    
-#     fig_final = go.Figure(fig)
-
-#     # Telemetría: Las iteraciones
-#     if iteraciones is not None and 'x[i]' in iteraciones:
-#         # Convertimos a float por si vienen como strings desde tu tabla
-#         x_puntos = [float(val) for val in iteraciones['x[i]'][:-1]] 
-        
-#         # En punto fijo, los puntos van sobre la curva g(x), en Newton sobre el eje X
-#         y_puntos = ec.evaluar_f(f, np.array(x_puntos)) if es_punto_fijo else [0] * len(x_puntos)
-
-#         etiquetas = [f"x_{i}" for i in range(len(x_puntos))]
-#         fig_final.add_trace(go.Scatter(
-#             x=x_puntos,
-#             y=y_puntos,
-#             mode='markers',
-#             text=etiquetas,
-#             textposition="top center",
-#             name='Iteraciones x_i',
-#             marker=dict(symbol='x', size=10, color='#EF4444'),
-#             hovertemplate="Iteración %{text}: %{x:.6f}<extra></extra>"
-#         ))
-    
-#     # Agregamos el punto final (La Raíz)
-#     # En Punto Fijo la intersección visual es en (raiz, raiz). En Newton es (raiz, 0).
-#     y_raiz = raiz if es_punto_fijo else 0
-#     fig_final.add_trace(go.Scatter(
-#         x=[raiz], y=[y_raiz],
-#         mode='markers',
-#         name='Punto de Convergencia',
-#         marker=dict(
-#             size=12, 
-#             color='#00E676', 
-#             line=dict(color='white', width=2)
-#         )
-#     ))
-
-#     st.plotly_chart(
-#         fig_final,
-#         use_container_width=True,
-#         key=key,
-#         config={
-#             'scrollZoom': False,
-#             'doubleClick': False, 
-#             'displayModeBar': True,
-#             'displaylogo': False,
-#             'showTips': False,
-#             'modeBarButtons': [['zoomIn2d', 'zoomOut2d', 'resetViews']]
-#         }
-#     )
-
-#     # Usamos x0 en lugar de inf y sup
-#     fig = generar_base_fig_abierto(f, raiz, x0, es_punto_fijo)
-    
-#     fig_final = go.Figure(fig)
-
-#     # Telemetría: Las iteraciones
-#     if iteraciones is not None and 'x[i]' in iteraciones:
-#         # Convertimos a float por si vienen como strings desde tu tabla
-#         x_puntos = [float(val) for val in iteraciones['x[i]'][:-1]] 
-        
-#         # En punto fijo, los puntos van sobre la curva g(x), en Newton sobre el eje X
-#         y_puntos = ec.evaluar_f(f, np.array(x_puntos)) if es_punto_fijo else [0] * len(x_puntos)
-
-#         etiquetas = [f"x_{i}" for i in range(len(x_puntos))]
-#         fig_final.add_trace(go.Scatter(
-#             x=x_puntos,
-#             y=y_puntos,
-#             mode='markers',
-#             text=etiquetas,
-#             textposition="top center",
-#             name='Iteraciones x_i',
-#             marker=dict(symbol='x', size=10, color='#EF4444'),
-#             hovertemplate="Iteración %{text}: %{x:.6f}<extra></extra>"
-#         ))
-    
-#     # Agregamos el punto final (La Raíz)
-#     # En Punto Fijo la intersección visual es en (raiz, raiz). En Newton es (raiz, 0).
-#     y_raiz = raiz if es_punto_fijo else 0
-#     fig_final.add_trace(go.Scatter(
-#         x=[raiz], y=[y_raiz],
-#         mode='markers',
-#         name='Punto de Convergencia',
-#         marker=dict(
-#             size=12, 
-#             color='#00E676', 
-#             line=dict(color='white', width=2)
-#         )
-#     ))
-
-#     st.plotly_chart(
-#         fig_final,
-#         use_container_width=True,
-#         key=key,
-#         config={
-#             'scrollZoom': False,
-#             'doubleClick': False, 
-#             'displayModeBar': True,
-#             'displaylogo': False,
-#             'showTips': False,
-#             'modeBarButtons': [['zoomIn2d', 'zoomOut2d', 'resetViews']]
-#         }
-#     )
