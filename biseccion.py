@@ -55,12 +55,6 @@ def biseccion(f,a,b,err):
 
 def mostrar_info():
 
-    # Botón para volver al menú principal
-    if st.button("⬅️ Volver al Inicio"):
-        st.session_state.pagina_actual = "Inicio"
-        st.rerun() # Esto fuerza a la página a recargarse instantáneamente
-
-
     st.header('Metodo Bisección')
     
     formula = st.text_input('Escribe tu función $f(x)$:', value='x**2 + 11*x - 6')
@@ -101,7 +95,13 @@ def mostrar_info():
                 
             else:
                 st.success(f'Raíz encontrada en: $$x \\approx {round(raiz,6)}$$')
-                grafico.dibujar(formula, raiz, inf, sup, key="graf_unico_bis", iteraciones=datos if mostrar_datos else None)
+                grafico.dibujar(
+                    formula, 
+                    raiz, 
+                    inf, 
+                    sup, 
+                    key="graf_unico_bis", 
+                    iteraciones=datos if mostrar_datos else None)
                 
                 if mostrar_datos:
                     st.dataframe(pd.DataFrame(datos), use_container_width=True)          

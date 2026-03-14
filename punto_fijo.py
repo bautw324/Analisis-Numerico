@@ -40,11 +40,6 @@ def punto_fijo (g,x0,max_i=100):
 
 def mostrar_info():
     
-    if st.button("⬅️ Volver al Inicio"):
-        st.session_state.pagina_actual = "Inicio"
-    st.rerun() # Esto fuerza a la página a recargarse instantáneamente
-    st.header('Método del Punto Fijo')
-    
     st.info("""
     Para este método, debes ingresar la función ya despejada **g(x)**. 
     Recuerda que estamos buscando la raíz de $f(x) = 0$ resolviendo $x = g(x)$.
@@ -87,14 +82,24 @@ def mostrar_info():
             mostrar_datos = "Mostrar datos de iteraciones" in seleccion
 
             # Dibujamos el gráfico
-            grafico.dibujar_abierto(
+            grafico.dibujar(
                 f=formula_g, 
                 raiz=raiz, 
-                x0=x_inicial, 
+                inf=min(raiz-10,raiz+10),
+                sup=max(raiz-10,raiz+10),
+                # inf=raiz-10,
+                # sup=raiz+10,
                 key="grafico_pf", 
-                iteraciones=datos if mostrar_datos else None, # Usamos la variable segura
-                es_punto_fijo=True 
+                iteraciones=datos if mostrar_datos else None
             )
+            # grafico.dibujar_abierto(
+            #     f=formula_g, 
+            #     raiz=raiz, 
+            #     x0=x_inicial, 
+            #     key="grafico_pf", 
+            #     iteraciones=datos if mostrar_datos else None,
+            #     es_punto_fijo=True
+            # )
             
             # Mostramos la tabla si corresponde
             if mostrar_datos:
@@ -123,4 +128,3 @@ def punto_fijo(g, x_actual, tolerancia):
         x_actual = x_nuevo
     ''', "python") 
         
-
