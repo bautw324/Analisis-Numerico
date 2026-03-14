@@ -55,6 +55,12 @@ def biseccion(f,a,b,err):
 
 def mostrar_info():
 
+    # Botón para volver al menú principal
+    if st.button("⬅️ Volver al Inicio"):
+        st.session_state.pagina_actual = "Inicio"
+        st.rerun() # Esto fuerza a la página a recargarse instantáneamente
+
+
     st.header('Metodo Bisección')
     
     formula = st.text_input('Escribe tu función $f(x)$:', value='x**2 + 11*x - 6')
@@ -71,27 +77,36 @@ def mostrar_info():
         err = st.number_input('Tolerancia de error $E = 10^{-n}$',value=2,min_value=1, max_value=10)
         err = 10**(-err)
     try:
-        raiz, datos = biseccion(formula,inf,sup,err)
+        raiz, datos = biseccion(formula, inf, sup, err)
 
         if raiz is not None:
-            opcion = ["Comparar con Secante", "Mostrar datos de iteraciones"]
+            opciones_comp = ["Newton", "Secante"]
             seleccion = st.pills(
-                label="Selecciona una opción:", 
-                options=opcion, 
+                label="Comparar con:", 
+                options=opciones_comp, 
                 key="pills_bis", 
-                selection_mode='multi'
-                )
-            if "Comparar con Secante" in seleccion:
-                comparativa.comparar_sec_bis(formula,inf,sup,err, "Mostrar datos de iteraciones" in seleccion)
-            else:
-                st.success(f'Raíz encontrada en: $$x ≈ {round(raiz,6)}$$')
-                    
-                grafico.dibujar(formula, raiz, inf, sup,key="grafico_unico", iteraciones=datos if ("Mostrar datos de iteraciones" in seleccion) else None)
+                selection_mode='single'
+            )
+            
+            mostrar_datos = st.checkbox("Mostrar datos de iteraciones")
+
+            if seleccion == "Newton":
+                st.info("Para comparar con Newton, necesitamos un valor inicial $x_n$:")
+                # Le damos el punto medio del intervalo por defecto, que tiene sentido matemático
+                x_n_comp = st.number_input('Ingresar valor inicial $x_n$', value=(inf+sup)/2, step=1.0)
+                comparativa.comparar_generico("Bisección", "Newton", formula, err, mostrar_datos, inf=inf, sup=sup, x_n=x_n_comp)
                 
-                if "Mostrar datos de iteraciones" in seleccion:
-                    st.dataframe(pd.DataFrame(datos),use_container_width=True)          
+            elif seleccion == "Secante":
+                comparativa.comparar_generico("Bisección", "Secante", formula, err, mostrar_datos, inf=inf, sup=sup)
+                
+            else:
+                st.success(f'Raíz encontrada en: $$x \\approx {round(raiz,6)}$$')
+                grafico.dibujar(formula, raiz, inf, sup, key="graf_unico_bis", iteraciones=datos if mostrar_datos else None)
+                
+                if mostrar_datos:
+                    st.dataframe(pd.DataFrame(datos), use_container_width=True)          
         else:
-            st.error('No se ha encontrado la raíz.')
+            st.error('No se ha encontrado la raíz o no hay cambio de signo en el intervalo.')
 
     except Exception as e:
         st.error(f'Error en la fórmula: {e}')

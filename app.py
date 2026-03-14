@@ -1,6 +1,6 @@
 import streamlit as st
 from streamlit_pdf_viewer import pdf_viewer
-import inicio, biseccion, secante, punto_fijo
+import inicio, biseccion, secante, newton, punto_fijo
 
 st.set_page_config(
     page_title='App Análisis Numerico',
@@ -11,7 +11,7 @@ mostrar_tp = False
 
 def main():
 
-    st.title('App Análisis Numérico 📊')
+    """st.title('App Análisis Numérico 📊')
 
     choice = st.segmented_control(
         "Selecciona el módulo:",
@@ -39,7 +39,24 @@ def main():
         punto_fijo.mostrar_info()
     
     else:
+        inicio.inicio()"""
+    
+    if "pagina_actual" not in st.session_state:
+        st.session_state.pagina_actual = "Inicio"
+
+    if st.session_state.pagina_actual == "Inicio":
         inicio.inicio()
 
+    elif st.session_state.pagina_actual == "Bisección":
+    # Acá llamas a la función real que arma tu archivo biseccion.py
+        biseccion.mostrar_info()
+
+    elif st.session_state.pagina_actual == "Secante":
+    # Acá llamas a la función real que arma tu archivo secante.py
+        secante.mostrar_info()
+
+    elif st.session_state.pagina_actual == "Newton":
+    # Cambiá "mostrar_newton()" por el nombre real de tu función
+        newton.mostrar_info()
 if __name__ == '__main__':
     main()
