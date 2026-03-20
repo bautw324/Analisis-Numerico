@@ -57,7 +57,7 @@ def biseccion(f,a,b,err):
 def mostrar_info():
     st.markdown("""
     <h1 style='text-align: center; color:#ff4b4b;'>
-    📊 Método de Bisección
+    Método de Bisección
     </h1>
     """, unsafe_allow_html=True)
     
@@ -129,7 +129,12 @@ def mostrar_info():
                     comparativa.comparar_generico("Bisección", "Secante", formula, err, mostrar_datos, inf=inf, sup=sup)
                 else:
                     st.space('small')
-                    st.success(f'Raíz encontrada en: $x \\approx {round(raiz,6)}$')
+                    st.markdown(f"""
+                    <div style='background-color:#1c1f26;padding:15px;border-radius:10px'>
+                    <h3 style='color:#00ff9f;'>✔ Raíz encontrada</h3>
+                    <p style='font-size:20px;'>x ≈ {round(raiz,6)}</p>
+                    </div>
+                    """, unsafe_allow_html=True)
                     # Gráfico
                     grafico.dibujar(formula, raiz, inf, sup, key="graf_unico_bis", iteraciones=datos.obtener_datos() if mostrar_datos else None)
                     # Expander para la tabla
