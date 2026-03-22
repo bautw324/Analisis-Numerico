@@ -12,17 +12,19 @@ def agregar_dato():
     st.session_state.input_y = 0.0
 
 def calcular_regresion():
-    m, int = statistics.linear_regression(
-        st.session_state.datos['x'],
-        st.session_state.datos['y']
-    )
-    if m != 0:
-        raiz = int / m * (-1)
-        return m, int, raiz
+    try:
+        m, int = statistics.linear_regression(
+            st.session_state.datos['x'],
+            st.session_state.datos['y']
+        )
+        if m != 0:
+            raiz = int / m * (-1)
+            return m, int, raiz
+    except Exception as e:
+        st.warning('⚠️ No fue posible calcular la recta con estos valores.')
         
-    else:
-        st.error('La recta no tiene raices.')
-        return None
+    st.error('La recta no tiene raices.')
+    return None, None, None
     
 def mostrar_info():
     st.markdown("<h1 style='text-align: center;'>Regresión Lineal</h1>", unsafe_allow_html=True)
@@ -77,8 +79,9 @@ def mostrar_info():
 
             if len(st.session_state.datos['x']) > 1:
                 m, int, raiz = calcular_regresion()
-                st.latex(f'f(x) = {m:.4f}x {'+' if int>=0 else '-'} {abs(int):.4f}')
-                st.space('xsmall')
+                if raiz != None:
+                    st.latex(f'f(x) = {m:.4f}x {'+' if int>=0 else '-'} {abs(int):.4f}')
+                    st.space('xsmall')
 
             st.dataframe(
                 pd.DataFrame(st.session_state.datos),

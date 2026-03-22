@@ -1,6 +1,6 @@
 import streamlit as st
 import inicio
-from metodos import biseccion, secante, newton, punto_fijo, regresion
+from metodos import biseccion, secante, newton, punto_fijo, regresion, comparacion
 
 st.set_page_config(
     page_title='App Análisis Numerico',
@@ -73,7 +73,7 @@ def main():
         with col_nav:
             choice = st.pills(
                 "Navegación",
-                options=["Inicio", "Bisección", "Secante", "Newton", "Punto Fijo", "Regresión"],
+                options=["Inicio", "Bisección", "Secante", "Newton", "Punto Fijo", "Regresión", "Comparación"],
                 default="Inicio",
                 selection_mode='single',
                 label_visibility="collapsed"
@@ -98,6 +98,8 @@ def main():
             newton.mostrar_info()
         elif choice == 'Regresión':
             regresion.mostrar_info()
+        elif choice == 'Comparación':
+            comparacion.mostrar_info()
 
 if __name__ == '__main__':
     main()

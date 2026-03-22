@@ -5,14 +5,14 @@ from core.historial import Historial
 @st.cache_data(show_spinner="Calculando telemetría...")
 def biseccion(f,a,b,err):
     
-    datos = Historial(['a[i]','b[i]','x[i]','f(x[i])','Dx[i]'])
+    datos = Historial(['a[i]','b[i]','x[i]','f(x[i])','Dx[i]','Error Absoluto'])
     
     fa = ut.evaluar_f(f,a)
     fb = ut.evaluar_f(f,b)
 
     # Casos base
-    if fa * fb > 0:
-        return None, datos.obtener_datos()
+    if fa * fb >= 0:
+        return None, datos
     if a > b:
         a, b = b, a
         fa, fb = fb, fa
@@ -24,13 +24,15 @@ def biseccion(f,a,b,err):
         
         x=(a+b)/2
         fx=ut.evaluar_f(f,x)
+        err_abs = abs(b-a)/2
         
         datos.agregar({
             'a[i]':a,
             'b[i]':b,
             'x[i]':x,
             'f(x[i])':fx,
-            'Dx[i]':(x-a)
+            'Dx[i]':(x-a),
+            'Error Absoluto':err_abs
         })
 
         # Frena cuando el resultado es demasiado cercano al cero
@@ -102,16 +104,16 @@ def mostrar_info():
                 if raiz is not None:
                     # Usamos un Toggle (interruptor) para prender/apagar los puntos
                     mostrar_datos = st.toggle("Mostrar iteraciones en el gráfico")
-                    seleccion = st.pills(
-                        label="Comparar con:", 
-                        options=["Newton", "Secante"], 
-                        key="pills_bis", 
-                        selection_mode='single'
-                    )
+                    # seleccion = st.pills(
+                    #     label="Comparar con:", 
+                    #     options=["Newton", "Secante"], 
+                    #     key="pills_bis", 
+                    #     selection_mode='single'
+                    # )
                     
-                    if seleccion == "Newton":
-                        st.info("Para comparar con Newton, necesitamos un valor inicial $x_n$:")
-                        x_n_comp = st.number_input('Ingresar valor inicial $x_n$', value=(inf+sup)/2, step=1.0)
+                    # if seleccion == "Newton":
+                    #     st.info("Para comparar con Newton, necesitamos un valor inicial $x_n$:")
+                    #     x_n_comp = st.number_input('Ingresar valor inicial $x_n$', value=(inf+sup)/2, step=1.0)
                         
             except Exception as e:
                 raiz = None
@@ -123,22 +125,32 @@ def mostrar_info():
             # Verifica si existe la raíz antes de mostrar opciones adicionales
             if 'raiz' in locals() and raiz is not None:
                 
-                if seleccion == "Newton":
-                    comparativa.comparar_generico("Bisección", "Newton", formula, err, mostrar_datos, inf=inf, sup=sup, x_n=x_n_comp)
-                elif seleccion == "Secante":
-                    comparativa.comparar_generico("Bisección", "Secante", formula, err, mostrar_datos, inf=inf, sup=sup)
-                else:
-                    st.space('small')
-                    st.success(f'Raíz encontrada en: $x \\approx {round(raiz,6)}$')
-                    # Gráfico
-                    grafico.dibujar(formula, raiz, inf, sup, key="graf_unico_bis", iteraciones=datos.obtener_datos() if mostrar_datos else None)
-                    # Expander para la tabla
+                # if seleccion == "Newton":
+                #     comparativa.comparar_generico("Bisección", "Newton", formula, err, mostrar_datos, inf=inf, sup=sup, x_n=x_n_comp)
+                # elif seleccion == "Secante":
+                #     comparativa.comparar_generico("Bisección", "Secante", formula, err, mostrar_datos, inf=inf, sup=sup)
+                # else:
+                #     st.space('small')
+                #     st.success(f'Raíz encontrada en: $x \\approx {round(raiz,6)}$')
+                #     # Gráfico
+                #     grafico.dibujar(formula, raiz, inf, sup, key="graf_unico_bis", iteraciones=datos.obtener_datos() if mostrar_datos else None)
                     
-                    # Progresión en cada iteración
-                    # st.slider('Progresión en cada iteración', step=1, max_value=len(datos.obtener_datos().get('x[i]',None)))
                     
-                    with st.expander("Ver tabla de iteraciones"):
-                        st.table(datos.obtener_dataframe())
+                #     # Expander para la tabla
+                #     with st.expander("Ver tabla de iteraciones"):
+                #         st.table(datos.obtener_dataframe())
+                
+                st.space('small')
+                st.success(f'Raíz encontrada en: $x \\approx {raiz:.6f}$')
+                # Gráfico
+                grafico.dibujar(formula, raiz, inf, sup, key="graf_unico_bis", iteraciones=datos.obtener_datos() if mostrar_datos else None)
+                
+                
+                # Expander para la tabla
+                with st.expander("Ver tabla de iteraciones"):
+                    st.table(datos.obtener_dataframe())
+                    
+                    
             else:
                 if 'raiz' in locals():
                     st.error('No se ha encontrado la raíz o no hay cambio de signo en el intervalo.')
@@ -151,7 +163,7 @@ def biseccion(a,b,err):
     fb = f(b)
     
     # Casos base
-    if fa * fb > 0:
+    if fa * fb >= 0:
         return None
     if a > b:
         a, b = b, a

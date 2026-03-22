@@ -5,13 +5,13 @@ from core.historial import Historial
 @st.cache_data(show_spinner="Calculando telemetría...")
 def secante(f,a,b,err):
     
-    datos = Historial(['a[i]','b[i]','x[i]','f(x[i])','Dx[i]'])
+    datos = Historial(['a[i]','b[i]','x[i]','f(x[i])','Dx[i]','Error Absoluto'])
     
     fa = ut.evaluar_f(f,a)
     fb = ut.evaluar_f(f,b)
 
     # Casos base
-    if fa * fb > 0:
+    if fa * fb >= 0:
         return None, datos.obtener_datos()
     if a  > b:
         a, b = b, a
@@ -22,22 +22,24 @@ def secante(f,a,b,err):
     iteracion=0
     while iteracion < 100:
         
+        # Frena si es que la diferencia entre las derivadas es cercana al cero
+        if abs(fb - fa) < 1e-12:
+            st.warning("División por cero en secante. Los puntos están muy cerca.")
+            return None, datos
+        
         x = b - (fb * (b - a)) / (fb - fa)
         fx = ut.evaluar_f(f, x)
+        err_abs = abs(b - a)
 
         datos.agregar({
             'a[i]':a,
             'b[i]':b,
             'x[i]':x,
             'f(x[i])':fx,
-            'Dx[i]':(x-a)
+            'Dx[i]':(x-a),
+            'Error Absoluto':err_abs
         })
         
-        # Frena si es que la diferencia entre las derivadas es cercana al cero
-        if abs(fb - fa) < 1e-12:
-            st.warning("División por cero en secante. Los puntos están muy cerca.")
-            return None, datos
-
         # Frena cuando el resultado es demasiado cercano al cero
         if abs(fx) < 1e-12: 
             return x, datos
@@ -102,16 +104,16 @@ def mostrar_info():
                 if raiz is not None:
                     mostrar_datos = st.toggle("Mostrar iteraciones en el gráfico")
 
-                    seleccion = st.pills(
-                        label="Comparar con:", 
-                        options=["Bisección", "Newton"], 
-                        key="pills_sec", 
-                        selection_mode='single'
-                    )
+                    # seleccion = st.pills(
+                    #     label="Comparar con:", 
+                    #     options=["Bisección", "Newton"], 
+                    #     key="pills_sec", 
+                    #     selection_mode='single'
+                    # )
 
-                    if seleccion == "Newton":
-                        st.info("Para comparar con Newton, necesitamos un valor inicial $x_n$:")
-                        x_n_comp = st.number_input('Ingresar valor inicial $x_n$', value=sup, step=1.0)
+                    # if seleccion == "Newton":
+                    #     st.info("Para comparar con Newton, necesitamos un valor inicial $x_n$:")
+                    #     x_n_comp = st.number_input('Ingresar valor inicial $x_n$', value=sup, step=1.0)
 
             except Exception as e:
                 raiz = None
@@ -123,20 +125,30 @@ def mostrar_info():
             # Verifica si existe la raíz antes de mostrar opciones adicionales
             if 'raiz' in locals() and raiz is not None:
 
-                if seleccion == "Newton":
-                    comparativa.comparar_generico("Secante", "Newton", formula, err, mostrar_datos, inf=inf, sup=sup, x_n=x_n_comp)
+                # if seleccion == "Newton":
+                #     comparativa.comparar_generico("Secante", "Newton", formula, err, mostrar_datos, inf=inf, sup=sup, x_n=x_n_comp)
                     
-                elif seleccion == "Bisección":
-                    comparativa.comparar_generico("Secante", "Bisección", formula, err, mostrar_datos, inf=inf, sup=sup)
+                # elif seleccion == "Bisección":
+                #     comparativa.comparar_generico("Secante", "Bisección", formula, err, mostrar_datos, inf=inf, sup=sup)
                     
-                else:
-                    st.space('small')
-                    st.success(f'Raíz encontrada en: $$x \\approx {round(raiz,6)}$$')
-                    grafico.dibujar(formula, raiz, inf, sup, key="graf_unico_sec", iteraciones=datos.obtener_datos() if mostrar_datos else None)
+                # else:
+                #     st.space('small')
+                #     st.success(f'Raíz encontrada en: $$x \\approx {round(raiz,6)}$$')
+                #     grafico.dibujar(formula, raiz, inf, sup, key="graf_unico_sec", iteraciones=datos.obtener_datos() if mostrar_datos else None)
                     
-                    # Expander para la tabla
-                    with st.expander("Ver tabla de iteraciones"):
-                        st.table(datos.obtener_dataframe())       
+                #     # Expander para la tabla
+                #     with st.expander("Ver tabla de iteraciones"):
+                #         st.table(datos.obtener_dataframe())       
+                
+                st.space('small')
+                st.success(f'Raíz encontrada en: $$x \\approx {raiz:.6f}$$')
+                grafico.dibujar(formula, raiz, inf, sup, key="graf_unico_sec", iteraciones=datos.obtener_datos() if mostrar_datos else None)
+                
+                # Expander para la tabla
+                with st.expander("Ver tabla de iteraciones"):
+                    st.table(datos.obtener_dataframe())  
+                
+                
             else:
                 if 'raiz' in locals():
                     st.error('No se ha encontrado la raíz o no hay cambio de signo en el intervalo.')
@@ -150,7 +162,7 @@ def secante(a,b,err):
     fb = f(b)
     
     # Casos base
-    if fa * fb > 0:
+    if fa * fb >= 0:
         return None
     if a > b:
         a, b = b, a

@@ -13,20 +13,20 @@ def punto_fijo (g,x0, err):
     while iteracion < 100:
         try:
             x_nuevo = ut.evaluar_f(g, x_actual)
-            error_abs = abs(x_nuevo - x_actual)
+            err_abs = abs(x_nuevo - x_actual)
             
             datos.agregar({
             'x[i]':x_actual,
             'g(x[i])':x_nuevo,
-            'Error Absoluto':error_abs
+            'Error Absoluto':err_abs
             })
             
             # Sale si el error absoluto es demasiado grande
-            if error_abs > 1e6:
+            if err_abs > 1e6:
                 return x_nuevo, datos, False
             
             # |x_(i+1) - x_i| <= ε
-            if error_abs <= err:
+            if err_abs <= err:
                 
                 return x_nuevo, datos, True
             
@@ -97,7 +97,7 @@ def mostrar_info():
                     mostrar_datos = st.toggle("Mostrar iteraciones en el gráfico")
                     if not converge:
                         st.error('El método DIVERGIÓ o no alcanzó la tolerancia requerida.')
-                        st.warning(f'Último valor calculado: $x = {round(raiz, 6)}$')
+                        st.warning(f'Último valor calculado: $x \\approx {raiz:.6f}$')
 
             except Exception as e:
                 st.error(f'Error al procesar la fórmula: {e}')
@@ -105,14 +105,14 @@ def mostrar_info():
         with col_out:
             st.space('small')
             if 'raiz' in locals() and raiz is not None and converge:
-                st.success(f'El método CONVERGIÓ. Raíz aproximada: $$x ≈ {round(raiz,6)}$$')
+                st.success(f'El método CONVERGIÓ. Raíz aproximada: $$x \\approx {raiz:.6f}$$')
                 # Dibujamos el gráfico
                 grafico.dibujar(
                     f=formula_g, 
                     raiz=raiz, 
                     inf=raiz-5,
                     sup=raiz+5,
-                    key="grafico_pf", 
+                    key='graf Punto Fijo', 
                     iteraciones=datos.obtener_datos() if mostrar_datos else None
                 )
                 # Expander para la tabla

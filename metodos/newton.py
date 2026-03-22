@@ -6,7 +6,7 @@ from core.historial import Historial
 @st.cache_data(show_spinner="Calculando telemetría...")
 def newton(x_n,f,err):
    # Creamos el diccionario para guardar las iteraciones
-    datos = Historial({'x[i]','f(x[i])',"f'(x[i])",'x[i+1]'})
+    datos = Historial({'x[i]','f(x[i])',"f'(x[i])",'x[i+1]','Error Absoluto'})
     
     iteracion=0
     while iteracion < 100:
@@ -19,13 +19,16 @@ def newton(x_n,f,err):
             return None, datos
             
         x_n1 = x_n - (fa / d_evaluada)
+        
+        err_abs = abs(x_n1 - x_n)
 
         # Guardamos los datos de esta vuelta en el cuadro
         datos.agregar({
             'x[i]':x_n,
             'f(x[i])':fa,
             "f'(x[i])":d_evaluada,
-            'x[i+1]':x_n1
+            'x[i+1]':x_n1,
+            'Error Absoluto':err_abs
             })
 
         # Condición de corte
@@ -77,23 +80,25 @@ def mostrar_info():
             try:
                 raiz, datos = newton(x_n, formula, err)
                 if raiz is not None:
-                    # Pastillitas de selección única para comparar
-                    seleccion = st.pills(
-                        label="Comparar con:", 
-                        options=["Bisección", "Secante"], 
-                        key="pills_newton", 
-                        selection_mode='single'
-                    )
                     
                     mostrar_datos = st.toggle("Mostrar iteraciones en el gráfico")
-                    # Si eligió alguna de las opciones
-                    if seleccion:
-                        st.info(f"Para comparar con {seleccion}, necesitamos un intervalo inicial:")
-                        col1, col2 = st.columns(2)
-                        with col1:
-                            inf = st.number_input('Ingresar intervalo inferior', value=x_n - 5.0, step=1.0)
-                        with col2:
-                            sup = st.number_input('Ingresar intervalo superior', value=x_n + 5.0, step=1.0)
+                    
+                    # # Pastillitas de selección única para comparar
+                    # seleccion = st.pills(
+                    #     label="Comparar con:", 
+                    #     options=["Bisección", "Secante"], 
+                    #     key="pills_newton", 
+                    #     selection_mode='single'
+                    # )
+                    
+                    # # Si eligió alguna de las opciones
+                    # if seleccion:
+                    #     st.info(f"Para comparar con {seleccion}, necesitamos un intervalo inicial:")
+                    #     col1, col2 = st.columns(2)
+                    #     with col1:
+                    #         inf = st.number_input('Ingresar intervalo inferior', value=x_n - 5.0, step=1.0)
+                    #     with col2:
+                    #         sup = st.number_input('Ingresar intervalo superior', value=x_n + 5.0, step=1.0)
                     
             except Exception as e:
                 raiz = None
@@ -102,19 +107,24 @@ def mostrar_info():
         with col_out:
             # Si no eligió nada, muestra solo Newton
             if 'raiz' in locals() and raiz is not None:
-                if seleccion == None:
-                    st.space('small')
-                    st.success(f'Raíz encontrada en: $$x {round(raiz,6)}$$')
-                    inf_grafico = raiz - 5
-                    sup_grafico = raiz + 5
-                    grafico.dibujar(formula, raiz, inf_grafico, sup_grafico, key="graf_unico_newton", iteraciones=datos.obtener_datos() if mostrar_datos else None)
+                # if seleccion == None:
+                #     st.space('small')
+                #     st.success(f'Raíz encontrada en: $$x {round(raiz,6)}$$')
+                #     inf_grafico = raiz - 5
+                #     sup_grafico = raiz + 5
+                #     grafico.dibujar(formula, raiz, inf_grafico, sup_grafico, key="graf_unico_newton", iteraciones=datos.obtener_datos() if mostrar_datos else None)
                     
-                    # Expander para la tabla
-                    with st.expander("Ver tabla de iteraciones"):
-                        st.table(datos.obtener_dataframe())  
+                #     # Expander para la tabla
+                #     with st.expander("Ver tabla de iteraciones"):
+                #         st.table(datos.obtener_dataframe())  
                             
-                else:
-                    comparativa.comparar_generico("Newton", seleccion, formula, err, mostrar_datos, x_n=x_n, inf=inf, sup=sup)
+                # else:
+                #     comparativa.comparar_generico("Newton", seleccion, formula, err, mostrar_datos, x_n=x_n, inf=inf, sup=sup)
+                st.space('small')
+                st.success(f'Raíz encontrada en: $$x \\approx {raiz:.6f}$$')
+                inf_grafico = raiz - 5
+                sup_grafico = raiz + 5
+                grafico.dibujar(formula, raiz, inf_grafico, sup_grafico, key="graf_unico_newton", iteraciones=datos.obtener_datos() if mostrar_datos else None)
 
             else:
                 if 'raiz' in locals():
