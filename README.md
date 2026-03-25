@@ -1,6 +1,6 @@
-# 📊 Software de Métodos Numéricos
+# 📊 Roooty: Software de Métodos Numéricos
 Aplicación interactiva desarrollada con ❤️ en **Python + Streamlit** para la resolución de problemas de **Análisis Numérico**.
-- https://genovese.streamlit.app/
+- https://roooty.streamlit.app/
 
 ## 📦 Instalación
 1. Clonar el repositorio:

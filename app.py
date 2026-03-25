@@ -3,7 +3,7 @@ import inicio
 from metodos import biseccion, secante, newton, punto_fijo, regresion, comparacion
 
 st.set_page_config(
-    page_title='Rooty',
+    page_title='Roooty',
     page_icon='📊',
     layout='wide'
 )
@@ -56,7 +56,7 @@ def main():
         with col_logo:
             st.markdown("""
                 <div style="display: flex; margin-top:-10px;align-items: center; height: 100%; min-height: 45px; padding-left: 10px;">
-                    <h3 style="margin: 0; padding: 0; line-height: 1;">📊 Rooty</h3>
+                    <h3 style="margin: 0; padding: 0; line-height: 1;">📊 Roooty</h3>
                 </div>
             """, unsafe_allow_html=True)
             
