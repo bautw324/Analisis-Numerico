@@ -66,23 +66,23 @@ def mostrar_info():
                     
                     mostrar_datos = st.toggle("Mostrar iteraciones en el gráfico")
                 
-                grafico_func = grafico.obtener_grafico(
-                    f=formula_g, 
-                    raiz=raiz, 
-                    inf=inf_grafico,
-                    sup=sup_grafico,
-                    key='graf Punto Fijo', 
-                    iteraciones=datos.obtener_datos() if mostrar_datos else None
-                )
-                
-                ut.boton_descarga(
+                    grafico_func = grafico.obtener_grafico(
+                        f=formula_g, 
+                        raiz=raiz, 
+                        inf=inf_grafico,
+                        sup=sup_grafico,
+                        key='graf Punto Fijo', 
+                        iteraciones=datos.obtener_datos() if mostrar_datos else None
+                    )
+                    
+                    ut.boton_descarga(
                         metodo='Bisección',
                         formula=formula_g,
                         parametros=f"Tolerancia: 10^-{err_exp}",
                         raiz=raiz,
                         datos=datos.obtener_datos(),
                         fig=grafico_func
-                        )
+                    )
                         
             except Exception as e:
                 st.error(f'Error al procesar la fórmula: {e}')

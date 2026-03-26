@@ -4,7 +4,6 @@ import streamlit as st
 import sympy as sp
 import statistics
 
-@st.cache_data(show_spinner="Calculando telemetría...")
 def biseccion(f,a,b,err):
     
     datos = Historial(['a[i]','b[i]','x[i]','f(x[i])','Dx[i]','Error Absoluto'])
@@ -58,7 +57,6 @@ def biseccion(f,a,b,err):
 
     return x, datos
 
-@st.cache_data(show_spinner="Calculando telemetría...")
 def secante(f,a,b,err):
     
     datos = Historial(['a[i]','b[i]','x[i]','f(x[i])','Dx[i]','Error Absoluto'])
@@ -117,7 +115,6 @@ def secante(f,a,b,err):
         
     return x, datos
 
-@st.cache_data(show_spinner="Calculando telemetría...")
 def newton(x_n,f,err):
    # Creamos el diccionario para guardar las iteraciones
     datos = Historial({'x[i]','f(x[i])',"f'(x[i])",'x[i+1]','Error Absoluto'})
@@ -156,7 +153,6 @@ def newton(x_n,f,err):
         x_n=x_n1
         iteracion+=1
 
-@st.cache_data(show_spinner=True)
 def punto_fijo (g,x0, err):
    
     datos = Historial(['x[i]','g(x[i])','Error Absoluto'])
@@ -191,7 +187,6 @@ def punto_fijo (g,x0, err):
         iteracion+=1        
     return x_actual, datos, False
 
-@st.cache_data(show_spinner=True)
 def calcular_regresion(x_vals, y_vals):
     """
     Recibe listas normales de Python. Devuelve la pendiente (m), 

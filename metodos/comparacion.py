@@ -39,7 +39,7 @@ def renderizar_metodo(nombre_metodo, id_columna, formula, err):
                 
         elif nombre_metodo == "Punto Fijo":
             c1, c2 = st.columns(2)
-            with c1: g_form = st.text_input('Función despejada $g(x)$:', value='(6 - x**2)/11', key=f"g_{id_columna}")
+            with c1: g_form = st.text_input('Función despejada $g(x)$:', value=f"x - ({formula})", key=f"g_{id_columna}")
             with c2: x0 = st.number_input('Punto inicial $x_0$', value=0.0, key=f"pf_x0_{id_columna}")
 
             raiz, datos, converge = algoritmos.punto_fijo(g_form, x0, err)
@@ -107,10 +107,10 @@ def mostrar_info():
                 col_t1, col_t2 = st.columns(2)
                 with col_t1:
                     st.markdown(f"**{nom_1}**")
-                    st.table(datos_1.obtener_dataframe())
+                    st.dataframe(datos_1.obtener_dataframe(),width='stretch')
                 with col_t2:
                     st.markdown(f"**{nom_2}**")
-                    st.table(datos_2.obtener_dataframe())
+                    st.dataframe(datos_2.obtener_dataframe(),width='stretch')
             st.divider()
             st.subheader("🏆 Resultados de la Comparación")
             
