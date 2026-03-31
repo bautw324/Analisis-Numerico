@@ -1,7 +1,7 @@
 import streamlit as st
 import inicio
 from core import utils as ut
-from metodos import biseccion, secante, newton, punto_fijo, regresion, comparacion
+from metodos import biseccion, secante, newton, punto_fijo, regresion, comparacion, tangente
 
 st.set_page_config(
     page_title='Roooty',
@@ -70,7 +70,7 @@ def main():
         with col_nav:
             choice = st.pills(
                 "Navegación",
-                options=["Inicio", "Bisección", "Secante", "Newton", "Punto Fijo", "Regresión", "Comparación"],
+                options=["Inicio", "Bisección", "Secante", "Newton", "Tangente", "Punto Fijo", "Regresión", "Comparación"],
                 default="Inicio",
                 selection_mode='single',
                 label_visibility="collapsed"
@@ -98,10 +98,13 @@ def main():
             punto_fijo.mostrar_info()
         elif choice == 'Newton':
             newton.mostrar_info()
+        elif choice == 'Tangente':
+            tangente.mostrar_info()
         elif choice == 'Regresión':
             regresion.mostrar_info()
         elif choice == 'Comparación':
             comparacion.mostrar_info()
+
 
 if __name__ == '__main__':
     main()

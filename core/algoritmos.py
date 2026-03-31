@@ -216,6 +216,54 @@ def punto_fijo (g,x0, err):
         
     return None, datos # Llegó al límite de iteraciones sin converger
 
+def tangente(x_n1, x_n, f, err):
+    
+    max_iters = st.session_state.get('max_iters',100)
+    cero_maquina = st.session_state.get('cero_maquina', 1e-12)
+    limite_infinito = st.session_state.get('limite_infinito', 1e-12)
+    tipo_err = st.session_state.get('tipo_error', 'Absoluto')
+    datos = Historial({'x[i]','f(x[i])',"dx[i]",'x[i+1]',f'Error {tipo_err}'})
+
+    iteracion = 0
+    while iteracion < max_iters:
+        
+        try:
+            fx_n = ut.evaluar_f(f,x_n)
+            fx_n1 = ut.evaluar_f(f,x_n1)
+
+            x = x_n - fx_n * ((x_n - x_n1)/(fx_n - fx_n1))
+            fx = ut.evaluar_f(f,x)
+
+            err_cal = ut.calcular_error(x_n1, x_n)
+
+
+        # Guardamos los datos de esta vuelta en el cuadro
+            datos.agregar({
+                'x[i]':x_n,
+                'f(x[i])':fx,
+                "dx[i]":x_n1 - x_n,
+                'x[i+1]':x_n1,
+                f'Error {tipo_err}':err_cal
+                })
+
+            if abs(fx) < cero_maquina:
+                return x, datos
+            
+            if abs(x_n1) > limite_infinito:
+                return None, datos
+            
+            if err_cal <= err:
+                return x, datos
+            
+            else:
+                x_n, x_n1 = x, x_n
+
+            iteracion+=1
+
+        except ZeroDivisionError:
+            print("División por 0. Probar con otros valores.")
+            return None
+
 def calcular_regresion(x_vals, y_vals):
     """
     Recibe listas normales de Python. Devuelve la pendiente (m), 
