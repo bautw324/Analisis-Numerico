@@ -133,17 +133,17 @@ def newton(f,x_n,err):
     
     max_iters = st.session_state.get('max_iters',100)
     cero_maquina = st.session_state.get('cero_maquina', 1e-12)
-    limite_infinito = st.session_state.get('limite_infinito', 1e-12)
+    limite_infinito = st.session_state.get('limite_infinito', 1e6)
     tipo_err = st.session_state.get('tipo_error', 'Absoluto')
     datos = Historial({'x[i]','f(x[i])',"f'(x[i])",'x[i+1]',f'Error {tipo_err}'})
     
     # Variables útiles
     iteracion=0
+    derivada = str(sp.diff(f, 'x'))
     
     # Cálculo de la raíz
     while iteracion < max_iters:
         fa = ut.evaluar_f(f, x_n)
-        derivada = str(sp.diff(f, 'x'))
         d_evaluada = ut.evaluar_f(derivada, x_n)
         
         # Evitamos la división por cero si la derivada da 0
@@ -180,7 +180,7 @@ def punto_fijo (g,x0,err):
     
     max_iters = st.session_state.get('max_iters',100)
     cero_maquina = st.session_state.get('cero_maquina', 1e-12)
-    limite_infinito = st.session_state.get('limite_infinito', 1e-12)
+    limite_infinito = st.session_state.get('limite_infinito', 1e6)
     tipo_err = st.session_state.get('tipo_error', 'Absoluto')
     datos = Historial(['x[i]','g(x[i])',f'Error {tipo_err}'])
     
@@ -220,7 +220,7 @@ def tangente(f,x_n1,x_n,err):
     
     max_iters = st.session_state.get('max_iters',100)
     cero_maquina = st.session_state.get('cero_maquina', 1e-12)
-    limite_infinito = st.session_state.get('limite_infinito', 1e-12)
+    limite_infinito = st.session_state.get('limite_infinito', 1e6)
     tipo_err = st.session_state.get('tipo_error', 'Absoluto')
     datos = Historial({'x[i]','f(x[i])',"dx[i]",'x[i+1]',f'Error {tipo_err}'})
 
