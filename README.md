@@ -38,10 +38,18 @@ Aplicación interactiva desarrollada con ❤️ en **Python + Streamlit** para l
     pip install -r requirements.txt
     ```
 
-6. Ejecutar la aplicación
-    ```bash
-    streamlit run app.py
-    ```
+## 🛫 Ejecución local
+- Para la ejecución del programa
+  
+   ```bash
+   streamlit run app.py
+   ```
+- Para pausar la ejecución del programa
+  
+   ```bash
+   Ctrl + C
+   ```
+
 
 
 ## 📂 Estructura del Proyecto
@@ -55,6 +63,7 @@ Analisis-Numerico/
 │   ├── 📄 biseccion.py    # UI para el método de Bisección
 │   ├── 📄 secante.py      # UI para el método de la Secante
 │   ├── 📄 newton.py       # UI para el método de Newton-Raphson
+│   ├── 📄 tangente.py     # UI para el método de Tangente
 │   ├── 📄 punto_fijo.py   # UI para el método de Punto Fijo
 │   ├── 📄 regresion.py    # UI para el cálculo de Regresión Lineal simple
 │   └── 📄 comparacion.py  # Lógica para contrastar dos métodos en paralelo

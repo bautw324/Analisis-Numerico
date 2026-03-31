@@ -95,7 +95,11 @@ def mostrar_info():
         with col_out:
             st.space('small')
             if 'raiz' in locals() and raiz is not None:
-                ut.mostrar_panel_resultados(raiz,datos.obtener_datos(),grafico_func)
+                ut.mostrar_panel_resultados(
+                    raiz=raiz,
+                    datos=datos,
+                    grafico_f=grafico_func
+                    )
             else:
                 st.error('Ocurrió un error matemático durante el cálculo (probablemente la función divergió hacia el infinito o hay raíces complejas).')
 

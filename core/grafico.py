@@ -193,11 +193,12 @@ def obtener_grafico(f, raiz, inf, sup, key=None, iteraciones=None):
         fig_final = generar_puntos(fig_final,iteraciones,raiz)
     return fig_final
 
-def dibujar(fig_final):  
+def dibujar(fig_final, key=None):  
     # Finalmente, mostramos el gráfico unificado
     st.plotly_chart(
         fig_final,
         width='stretch',
+        key=key,
         config={
             'scrollZoom': False,
             'doubleClick': False, # <--- ESTO DESACTIVA EL RESET AL TOCAR
@@ -282,9 +283,10 @@ def dibujar_batalla_errores(historial_izq, historial_der, nombre_izq, nombre_der
     en escala logarítmica.
     """
     
-    # Extraemos los errores absolutos de los diccionarios de Historial
-    err_izq = historial_izq['Error Absoluto']
-    err_der = historial_der['Error Absoluto']
+    # Extraemos los errores de los diccionarios de Historial
+    tipo_err = st.session_state.get('tipo_error', 'Absoluto')
+    err_izq = historial_izq[f'Error {tipo_err}']
+    err_der = historial_der[f'Error {tipo_err}']
     
     # Creamos los índices de iteraciones (X)
     iter_izq = list(range(1, len(err_izq) + 1))

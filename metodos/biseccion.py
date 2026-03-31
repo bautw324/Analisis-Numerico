@@ -87,7 +87,7 @@ def mostrar_info():
         with col_out:
             # Verifica si existe la raíz antes de mostrar opciones adicionales
             if 'raiz' in locals() and raiz is not None:
-                ut.mostrar_panel_resultados(raiz=raiz,datos=datos.obtener_datos(),grafico_f=grafico_f)
+                ut.mostrar_panel_resultados(raiz=raiz,datos=datos,grafico_f=grafico_f)
                        
             else:
                 if 'raiz' in locals():

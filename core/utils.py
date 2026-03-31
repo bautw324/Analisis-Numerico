@@ -289,5 +289,5 @@ def mostrar_panel_resultados(raiz, datos, grafico_f):
     
     # Expander para la tabla
     with st.expander("Ver tabla de iteraciones"):
-        st.dataframe(datos,width='stretch',hide_index=False)
+        st.dataframe(datos.obtener_dataframe(),width='stretch',hide_index=False)
 

@@ -129,7 +129,7 @@ def secante(f,a,b,err):
         
     return x, datos
 
-def newton(x_n,f,err):
+def newton(f,x_n,err):
     
     max_iters = st.session_state.get('max_iters',100)
     cero_maquina = st.session_state.get('cero_maquina', 1e-12)
@@ -176,7 +176,7 @@ def newton(x_n,f,err):
         x_n=x_n1
         iteracion+=1
 
-def punto_fijo (g,x0, err):
+def punto_fijo (g,x0,err):
     
     max_iters = st.session_state.get('max_iters',100)
     cero_maquina = st.session_state.get('cero_maquina', 1e-12)
@@ -216,7 +216,7 @@ def punto_fijo (g,x0, err):
         
     return None, datos # Llegó al límite de iteraciones sin converger
 
-def tangente(x_n1, x_n, f, err):
+def tangente(f,x_n1,x_n,err):
     
     max_iters = st.session_state.get('max_iters',100)
     cero_maquina = st.session_state.get('cero_maquina', 1e-12)
@@ -237,7 +237,7 @@ def tangente(x_n1, x_n, f, err):
             err_cal = ut.calcular_error(x_n1, x_n)
 
 
-        # Guardamos los datos de esta vuelta en el cuadro
+            # Guardamos los datos de esta vuelta en el cuadro
             datos.agregar({
                 'x[i]':x_n,
                 'f(x[i])':fx,
@@ -264,7 +264,7 @@ def tangente(x_n1, x_n, f, err):
             print("División por 0. Probar con otros valores.")
             return None
 
-def calcular_regresion(x_vals, y_vals):
+def calcular_regresion(x_vals,y_vals):
     """
     Recibe listas normales de Python. Devuelve la pendiente (m), 
     ordenada al origen (b), la raíz y el R^2.

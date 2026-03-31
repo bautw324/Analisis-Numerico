@@ -9,6 +9,16 @@ st.set_page_config(
     layout='wide'
 )
 
+METODOS = {
+    "Bisección":biseccion,
+    "Secante":secante, 
+    "Newton":newton, 
+    "Tangente":tangente, 
+    "Punto Fijo":punto_fijo, 
+    "Regresión":regresion, 
+    "Comparación":comparacion
+}
+
 # --- CSS ---
 estilo = """
     <style>
@@ -70,8 +80,8 @@ def main():
         with col_nav:
             choice = st.pills(
                 "Navegación",
-                options=["Inicio", "Bisección", "Secante", "Newton", "Tangente", "Punto Fijo", "Regresión", "Comparación"],
-                default="Inicio",
+                options=list(METODOS.keys()),
+                default=None,
                 selection_mode='single',
                 label_visibility="collapsed"
             )
@@ -82,29 +92,14 @@ def main():
     st.write("") # Espacio separador
     
     # CONTENIDO DE LA APP
-    if choice == 'Inicio' or choice is None:
+    if choice is None:
         inicio.inicio()
     else:
         
         if st.session_state.get('mostrar_pdf', False):
             st.pdf("archivos/Consigna Tp 1 inf tele.pdf")
         
-        # Rutas normales
-        if choice == 'Bisección':
-            biseccion.mostrar_info()
-        elif choice == 'Secante':
-            secante.mostrar_info()
-        elif choice == 'Punto Fijo':
-            punto_fijo.mostrar_info()
-        elif choice == 'Newton':
-            newton.mostrar_info()
-        elif choice == 'Tangente':
-            tangente.mostrar_info()
-        elif choice == 'Regresión':
-            regresion.mostrar_info()
-        elif choice == 'Comparación':
-            comparacion.mostrar_info()
-
+        METODOS[choice].mostrar_info()
 
 if __name__ == '__main__':
     main()

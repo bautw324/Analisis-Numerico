@@ -52,7 +52,7 @@ def mostrar_info():
             
             st.divider()
             try:
-                raiz, datos = algoritmos.tangente(x_n1, x_n, formula, err)
+                raiz, datos = algoritmos.tangente(formula, x_n1, x_n, err)
                 if raiz is not None:
                     
                     inf_grafico = raiz - 5
@@ -78,7 +78,11 @@ def mostrar_info():
         with col_out:
             # Si no eligió nada, muestra solo Newton
             if 'raiz' in locals() and raiz is not None:
-                ut.mostrar_panel_resultados(raiz,datos.obtener_dataframe(),grafico_f)
+                ut.mostrar_panel_resultados(
+                    raiz=raiz,
+                    datos=datos,
+                    grafico_f=grafico_f
+                    )
 
             else:
                 if 'raiz' in locals():
