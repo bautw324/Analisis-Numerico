@@ -153,7 +153,7 @@ def inicio():
         st.write("Dominador absoluto de los bucles `while` y cazador implacable de divisiones por cero.")
         
     with f1_3:
-        st.markdown("#### 🥷 Micaicas Villa")
+        st.markdown("#### 🥷 Brisa Romero")
         st.caption("Rol: QA Destructivo")
         st.write("El tester que rompía la app poniendo $10^{100}$ en los inputs para ver qué explotaba.")
         
@@ -173,7 +173,7 @@ def inicio():
         st.write("Líder espiritual. Mantuvo la moral alta y el termo siempre lleno en las madrugadas de código.")
         
     with f2_2:
-        st.markdown("#### 🧙‍♂️ Brisa Romero")
+        st.markdown("#### 🧙‍♂️ Micaias Villa")
         st.caption("Rol: Git Master & DevOps")
         st.write("El salvador de los *merge conflicts*. Su único miedo es que no compile en la PC del profe.")
         
