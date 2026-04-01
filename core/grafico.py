@@ -20,17 +20,17 @@ def generar_base_fig(f, raiz, inf, sup,key=None):
     fig.add_trace(go.Scatter(
         x=x, y=y, 
         mode='lines', 
-        name='f(x)' if key!='grafico_pf' else 'g(x)', 
+        name='f(x)' if key!='graf_punto fijo' else 'g(x)', 
         line=dict(color='#1E88E5', width=3)
     ))
-    if key == 'graf Punto Fijo':
+    if key == 'graf_punto fijo':
         fig.add_trace(go.Scatter(
             x=x, y=x, # y = x
             mode='lines',
             name='y = x',
             line=dict(color='#FFCA28', width=2, dash='dash')
         ))
-    elif key == 'graf_bis' or key == 'graf_sec':
+    elif key == 'graf_bisección' or key == 'graf_regula falsi':
         # Línea punteada para el límite inferior 'a'
         fig.add_vline(
             x=inf, 
@@ -185,9 +185,9 @@ def obtener_grafico(f, raiz, inf, sup, key=None, iteraciones=None):
     
     # Creamos una COPIA para no ensuciar el objeto original en el caché
     fig_final = go.Figure(fig)
-    if key == 'graf Punto Fijo':
+    if key == 'graf_punto fijo':
         fig_final = generar_puntos_pf(f,fig_final,iteraciones,raiz)
-    elif key == 'regresion':
+    elif key == 'graf_regresion':
         fig_final = generar_puntos_reg(fig_final,iteraciones,raiz)
     else:
         fig_final = generar_puntos(fig_final,iteraciones,raiz)
@@ -315,14 +315,20 @@ def dibujar_batalla_errores(historial_izq, historial_der, nombre_izq, nombre_der
         marker=dict(size=6)
     ))
 
-    # Configuración del Layout (Título, Ejes, Fondo transparente)
     fig.update_layout(
         title="Batalla de Convergencia: Decaimiento del Error",
         xaxis_title="Número de Iteración",
-        yaxis_title="Error Absoluto (Tolerancia)",
-        yaxis_type="log", # <-- Escala logarítmica
+        yaxis_title="Error (Tolerancia)",
+        yaxis_type="log",
+        
+        yaxis=dict(
+            type="log",
+            tickformat="~g",   # Muestra: 10, 1, 0.1, 0.01 — más limpio
+            dtick=1,
+        ),
+        
         legend=dict(yanchor="top", y=0.99, xanchor="right", x=0.99),
-        hovermode="x unified", # Muestra ambos valores al pasar el mouse
+        hovermode="x unified",
         dragmode=False
     )
     

@@ -1,7 +1,15 @@
 import streamlit as st
 import inicio
 from core import utils as ut
-from metodos import biseccion, secante, newton, punto_fijo, regresion, comparacion, tangente
+
+# Importamos las CLASES, no los módulos
+from metodos.biseccion import Biseccion
+from metodos.regula_falsi import Regula_Falsi
+from metodos.newton import Newton
+from metodos.punto_fijo import PuntoFijo
+from metodos.secante import Secante
+from metodos.regresion import Regresion
+from metodos.comparacion import Comparacion
 
 st.set_page_config(
     page_title='Roooty',
@@ -9,15 +17,21 @@ st.set_page_config(
     layout='wide'
 )
 
-METODOS = {
-    "Bisección":biseccion,
-    "Secante":secante, 
-    "Newton":newton, 
-    "Tangente":tangente, 
-    "Punto Fijo":punto_fijo, 
-    "Regresión":regresion, 
-    "Comparación":comparacion
-}
+# Instanciamos cada método una sola vez
+# Para agregar uno nuevo: solo agregarlo acá
+METODOS = [
+    Biseccion(),
+    Regula_Falsi(),
+    Newton(),
+    PuntoFijo(),
+    Secante(),
+    Regresion(),
+    Comparacion()
+]
+
+# Construimos el diccionario dinámicamente desde las propiedades de cada clase
+# La key es "Bisección", "Newton", etc.
+METODOS_DICT = {f"{m.nombre}": m for m in METODOS}
 
 # --- CSS ---
 estilo = """
@@ -63,43 +77,40 @@ estilo = """
     </div>
 """
 st.markdown(estilo, unsafe_allow_html=True)
-# -----------------------------------------
 
 def main():
     with st.container(border=True):
-        
-        col_logo, col_nav, col_ajustes = st.columns([1.2, 3, 0.3], vertical_alignment="center") 
-        
+        col_logo, col_nav, col_ajustes = st.columns([1.2, 3, 0.3], vertical_alignment="center")
+
         with col_logo:
             st.markdown("""
                 <div style="display: flex; margin-top:-10px;align-items: center; height: 100%; min-height: 45px; padding-left: 10px;">
                     <h3 style="margin: 0; padding: 0; line-height: 1;">📊 Roooty</h3>
                 </div>
             """, unsafe_allow_html=True)
-            
+
         with col_nav:
             choice = st.pills(
                 "Navegación",
-                options=list(METODOS.keys()),
+                options=list(METODOS_DICT.keys()),  # Se arma solo con los nombres
                 default=None,
                 selection_mode='single',
                 label_visibility="collapsed"
             )
-            
-        with col_ajustes:
-            ut.mostrar_menu_ajustes()           
 
-    st.write("") # Espacio separador
-    
-    # CONTENIDO DE LA APP
+        with col_ajustes:
+            ut.mostrar_menu_ajustes()
+
+    st.write("")
+
     if choice is None:
         inicio.inicio()
     else:
-        
         if st.session_state.get('mostrar_pdf', False):
             st.pdf("archivos/Consigna Tp 1 inf tele.pdf")
         
-        METODOS[choice].mostrar_info()
+        # Una sola línea en vez del if/elif de antes
+        METODOS_DICT[choice].mostrar_info()
 
 if __name__ == '__main__':
     main()

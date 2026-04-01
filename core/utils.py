@@ -159,7 +159,7 @@ def mostrar_menu_ajustes():
         st.button("♻️ Restablecer Valores", width='stretch', on_click=restablecer_ajustes)     
 
 @st.cache_data(show_spinner=False)
-def generar_pdf_reporte(metodo, formula, parametros, raiz, historial_dict, fig):
+def generar_pdf_reporte(metodo, formula, params, raiz, historial_dict, fig):
     pdf = FPDF()
     pdf.add_page()
     
@@ -178,7 +178,12 @@ def generar_pdf_reporte(metodo, formula, parametros, raiz, historial_dict, fig):
     pdf.set_font("helvetica", "", 12)
     pdf.set_text_color(60, 60, 60) 
     pdf.cell(0, 8, f"Método de {metodo}: f(x) = {formula}", new_x="LMARGIN", new_y="NEXT")
-    pdf.cell(0, 8, f"Parámetros: {parametros}", new_x="LMARGIN", new_y="NEXT")
+    params_str = ", ".join(
+    f"{k}: {round(v, 4)}" if isinstance(v, float) else f"{k}: {v}" 
+    for k, v in params.items()
+)
+        
+    pdf.cell(0, 8, f"Parámetros: {params_str}", new_x="LMARGIN", new_y="NEXT")
     
     pdf.set_font("helvetica", "B", 12)
     pdf.set_text_color(39, 174, 96) # Verde éxito
@@ -259,14 +264,14 @@ def generar_pdf_reporte(metodo, formula, parametros, raiz, historial_dict, fig):
 
     return bytes(pdf.output())
 
-def boton_descarga(metodo, formula, parametros, raiz, datos, fig):
+def boton_descarga(metodo, formula, params, raiz, datos, fig):
     if st.button('Generar reporte en PDF',key='generar_repo',type='secondary', icon='📝'):
         # Generamos el PDF en crudo (los bytes)
         with st.spinner('Generando reporte PDF...',show_time=True):
             pdf_bytes = generar_pdf_reporte(
                 metodo=metodo,
                 formula=formula,
-                parametros=parametros,
+                params=params,
                 raiz=raiz,
                 historial_dict=datos,
                 fig=fig
@@ -279,15 +284,3 @@ def boton_descarga(metodo, formula, parametros, raiz, datos, fig):
             type="primary", # Lo pinta del color principal de tu app
             icon="📄"
         )
-
-def mostrar_panel_resultados(raiz, datos, grafico_f):       
-    st.space('small')
-    st.success(f'Raíz encontrada en: $x \\approx {raiz:.6f}$')
-    # Gráfico
-    with st.spinner(text='Generando grafica...'):
-        grafico.dibujar(grafico_f)
-    
-    # Expander para la tabla
-    with st.expander("Ver tabla de iteraciones"):
-        st.dataframe(datos.obtener_dataframe(),width='stretch',hide_index=False)
-

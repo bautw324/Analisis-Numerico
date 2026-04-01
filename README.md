@@ -4,86 +4,71 @@ Aplicación interactiva desarrollada con ❤️ en **Python + Streamlit** para l
 
 ## 📦 Instalación
 1. Clonar el repositorio:
-   ```bash
+```bash
    git clone https://github.com/BautistaGenovese/Analisis-Numerico.git
    cd Analisis-Numerico
-   ```
-3. Crear entorno de ejecución
-   
-    Se recomienda ejecutar el proyecto dentro de un entorno virtual de Python para evitar conflictos entre dependencias. Crear y activar el entorno virtual:
+```
+2. Crear entorno de ejecución virtual:
+```bash
+   python -m venv .venv
+```
+   Activar el entorno:
+   - Windows:
+     ```bash
+     .venv\Scripts\activate
+     ```
+     
+   - Linux/Mac:
+     ```bash
+     source .venv/bin/activate
+     ```
 
-   Crear entorno virtual:
-
-      ```bash
-      python -m venv .venv
-      ```
-
-   Activar el entorno virtual:
-
-      - En Windows:
-   
-         ```bash
-         .venv\Scripts\activate
-         ```
-      
-      - En Linux o Mac:
-      
-         ```bash
-         source .venv/bin/activate
-         ```
-
-5. Instalar dependencias:
-
-    ```bash
-    pip install -r requirements.txt
-    ```
+3. Instalar dependencias:
+```bash
+pip install -r requirements.txt
+```
 
 ## 🛫 Ejecución local
-- Para la ejecución del programa
-  
+- Iniciar
    ```bash
    streamlit run app.py
    ```
-- Para pausar la ejecución del programa
+- Detener
   
-   ```bash
-   Ctrl + C
-   ```
-
-
+   Presionar `Ctrl + C`
 
 ## 📂 Estructura del Proyecto
-
 ```
 Analisis-Numerico/
-├── 📄 app.py              # Punto de entrada principal (Configuración de Streamlit)
-├── 📄 inicio.py           # Pantalla de bienvenida e información del equipo
+├── 📄 app.py                    # Punto de entrada principal
+├── 📄 inicio.py                 # Pantalla de bienvenida e información del equipo
 │
-├── 📂 metodos/            # Interfaz de los algoritmos numéricos
-│   ├── 📄 biseccion.py    # UI para el método de Bisección
-│   ├── 📄 secante.py      # UI para el método de la Secante
-│   ├── 📄 newton.py       # UI para el método de Newton-Raphson
-│   ├── 📄 tangente.py     # UI para el método de Tangente
-│   ├── 📄 punto_fijo.py   # UI para el método de Punto Fijo
-│   ├── 📄 regresion.py    # UI para el cálculo de Regresión Lineal simple
-│   └── 📄 comparacion.py  # Lógica para contrastar dos métodos en paralelo
+├── 📂 metodos/                  # Clases de los métodos numéricos (UI + lógica de vista)
+│   ├── 📄 metodo_numerico.py    # Clase base abstracta (MetodoNumerico)
+│   ├── 📄 biseccion.py          # Método de Bisección
+│   ├── 📄 regula_falsi.py       # Método de Regula Falsi (Falsa Posición)
+│   ├── 📄 newton.py             # Método de Newton-Raphson
+│   ├── 📄 secante.py            # Método de la Secante
+│   ├── 📄 punto_fijo.py         # Método de Punto Fijo
+│   ├── 📄 regresion.py          # Regresión Lineal por Mínimos Cuadrados
+│   └── 📄 comparacion.py        # Comparación cara a cara de dos métodos
 │
-├── 📂 core/               # Herramientas de soporte y visualización
-│   ├── 📄 algoritmos.py   # Lógica matemática pura (Bisección, Newton, etc.)
-│   ├── 📄 grafico.py      # Generación de trazados interactivos con Plotly
-│   ├── 📄 historial.py    # Clase para la gestión de iteraciones y datos
-│   └── 📄 utils.py        # Evaluación de funciones y formateo LaTeX
+├── 📂 core/                     # Herramientas de soporte y visualización
+│   ├── 📄 algoritmos.py         # Lógica matemática pura de cada método
+│   ├── 📄 grafico.py            # Trazados interactivos con Plotly
+│   ├── 📄 historial.py          # Clase Historial para gestión de iteraciones
+│   └── 📄 utils.py              # Evaluación de f(x), LaTeX, PDF y configuración
 │
-├── 📂 archivos/           # Documentación PDF y consignas del TP
-├── 📂 animaciones/        # Archivos JSON para Lottie (Welcome.json)
-└── 📄 requirements.txt    # Librerías necesarias (NumPy, Pandas, Plotly, etc.)
+├── 📂 archivos/                 # Documentación PDF y consignas del TP
+├── 📂 animaciones/              # Archivos JSON para animaciones Lottie
+└── 📄 requirements.txt          # Dependencias del proyecto
 ```
 
-## 🛠️ Tecnologías utilizadas
-- Python
-- Streamlit
-- NumPy
-- Plotly
-- Pandas
-- SymPy
-- fpdf2 y Kaleido
+## 🏗️ Arquitectura
+Los métodos heredan de la clase abstracta `MetodoNumerico`, que define el esqueleto
+común de toda la UI (`mostrar_info`). Cada subclase solo implementa lo que es único:
+`render_inputs`, `ejecutar`, `render_teoria`, etc. Agregar un método nuevo = crear
+un archivo y registrarlo en `app.py`.
+
+## 🛠️ Tecnologías
+Python · Streamlit · NumPy · Plotly · Pandas · SymPy · fpdf2 · Kaleido

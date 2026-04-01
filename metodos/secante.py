@@ -1,129 +1,76 @@
-import streamlit as st, math
-from core import algoritmos, grafico, utils as ut
+import streamlit as st
+from metodos.metodo_numerico import MetodoNumerico
+from core.algoritmos import secante
 
-def mostrar_info():
-    st.markdown("<h1 style='text-align: center;'>Método Secante</h1>", unsafe_allow_html=True)
+class Secante(MetodoNumerico):
     
-    with st.expander("📖 ¿Cómo funciona el método de la Secante?"):
-        st.markdown("""
-        **Concepto básico:** Es un método abierto que aproxima la raíz trazando una línea recta (secante) que pasa por dos puntos evaluados en la función. Donde esta línea cruza el eje $X$, se obtiene el nuevo punto para la siguiente iteración. Es una alternativa excelente cuando calcular la derivada es muy complejo.
-        
-        **Fórmula de iteración:**
-        """)
-        st.latex(r"x_{i+1} = x_i - f(x_i) \cdot \frac{x_i - x_{i-1}}{f(x_i) - f(x_{i-1})}")
-        
-        st.markdown("""
-        **Intervalos permitidos y Condiciones:**
-        * Requiere **dos puntos iniciales** $x_0$ y $x_1$, preferentemente cercanos a la raíz buscada.
-        * A diferencia de la bisección, **no es obligatorio** que la raíz esté encerrada entre estos dos puntos, aunque ayuda a la convergencia.
-        """)
-        st.warning(r"⚠️ **Restricción:** Para evitar la división por cero, las evaluaciones de los puntos no pueden ser iguales: $f(x_i) \neq f(x_{i-1})$.")
+    @property
+    def nombre(self): return "Secante"
     
-    with st.container(border=True):
-    
-        # Dividimos la pantalla: 1 parte para inputs, 2 partes para gráficos
-        col_in, col_out = st.columns([1, 2], gap="large")
-        with col_in:
-            st.subheader("📥 Ingreso de datos")
-            formula = st.text_input('Escribe tu función $f(x)$:', value='x**2 + 11*x - 6')
-            st.caption("Usa `( )` para agrupar elementos. Por ejemplo `e^(1-x)` para $$ e^{1-x}$$.")
-            st.latex(ut.mostrar_formula(formula))
-            st.divider()
-        
-            c1, c2 = st.columns(2)
-            with c1:
-                inf = st.number_input('Ingresar intervalo inferior',value=-10.0,step=2.0)
-            with c2:
-                sup = st.number_input('Ingresar intervalo superior',value=10.0,step=2.0)
-            err_exp = st.select_slider(
-                    "Presición",
-                    options=[1,2,3,4,5,6,7,8,9,10],
-                    value=2,
-                    format_func=lambda x: f"$10^{{{-int(x)}}}$"
-                )
-            err = 10**(-err_exp)
-            st.divider()
+    def ejecutar(self, f, err, **params):
+        return secante(
+            f=f,
+            x_n1=params['x_n1'],
+            x_n=params['x_n'],
+            err=err
+            )
+
+    def render_teoria(self):
+        with st.expander("📖 ¿Cómo funciona el método de la Secante?"):
+            st.markdown("""
+            **Concepto básico:** Es un **método abierto** que nace como una alternativa directa a Newton-Raphson. En lugar de exigirte calcular la derivada analítica $f'(x)$ (que a veces es imposible o muy costosa), aproxima la pendiente trazando una línea **secante** entre los dos últimos puntos evaluados. Donde esta recta cruza el eje $X$, encontramos nuestra nueva aproximación.
             
-            try:
-                # Asumo que tu función se llama secante() adentro de secante.py
-                raiz, datos = algoritmos.secante(formula, inf, sup, err) 
-                if raiz is not None:
-                    
-                    mostrar_datos = st.toggle("Mostrar iteraciones en el gráfico")
-
-                    grafico_f = grafico.obtener_grafico(formula, raiz, inf, sup, key="graf_sec", iteraciones=datos.obtener_datos() if mostrar_datos else None
-                    )
-                    
-                    ut.boton_descarga(
-                        metodo='Secante',
-                        formula=formula,
-                        parametros=f"Intervalo [{inf}, {sup}], Tolerancia: 10^-{err_exp}",
-                        raiz=raiz,
-                        datos=datos.obtener_datos(),
-                        fig=grafico_f
-                        )
-                    
-            except Exception as e:
-                raiz = None
-                st.error(f'Error en la fórmula: {e}')
-                st.info('Escribe la fórmula correctamente. Ejemplo: `x**2 + 11*x - 6`')
-
-        # --- ZONA DE GRÁFICOS Y RESULTADOS ---
-        with col_out:
-            # Verifica si existe la raíz antes de mostrar opciones adicionales
-            if 'raiz' in locals() and raiz is not None:
-                ut.mostrar_panel_resultados(raiz=raiz,datos=datos,grafico_f=grafico_f)
-                
-            else:
-                if 'raiz' in locals():
-                    st.error('No se ha encontrado la raíz o no hay cambio de signo en el intervalo.')
-
-
-    st.divider()
-    st.header('Código hecho en Python')
-    st.code('''
-def secante(a,b,err):
-    fa = f(a)
-    fb = f(b)
+            **Fórmula de iteración:**
+            """)
+            
+            # La fórmula exacta de diferencias finitas que usabas en tangente.py
+            st.latex(r"x_{i+1} = x_i - f(x_i) \cdot \frac{x_{i-1} - x_i}{f(x_{i-1}) - f(x_i)}")
+            
+            st.markdown("""
+            **Intervalos permitidos y Condiciones:**
+            * Requiere **dos puntos iniciales** ($x_{i-1}$ y $x_i$).
+            * Al ser un método abierto, **no requiere** que la raíz esté encerrada entre estos dos puntos (no hace falta que haya cambio de signo).
+            * **No necesitas conocer la derivada** de la función.
+            * Suele converger casi tan rápido como Newton, pero requiere que los puntos iniciales estén relativamente cerca de la raíz para no divergir.
+            """)
+            st.warning(r"⚠️ **Restricción:** La función evaluada en los dos puntos de la iteración actual no debe tener el mismo valor ($f(x_{i-1}) \neq f(x_i)$). Si son iguales, el denominador se vuelve cero, la línea secante queda totalmente horizontal y nunca cruza el eje $X$.")
     
-    # Casos base
-    if fa * fb >= 0:
-        return None
-    if a > b:
-        a, b = b, a
-        fa, fb = fb, fa
-
+    def render_inputs(self,key=None):
+        c1, c2 = st.columns(2)
+        with c1:
+            x_n = st.number_input('Ingresar $(x_n)$',value=-10.0,step=2.0,key=f'{key}_xn')
+        with c2:
+            x_n1 = st.number_input('Ingresar $(x_{n+1})$',value=10.0,step=2.0,key=f'{key}_xn1')
+        
+        return {'x_n':x_n,'x_n1':x_n1}
+    
+    def mostrar_codigo(self):
+        st.code('''
+def secante(x_n1, x_n, f, err):
+    
     # Calculo de la raíz
-    x_anterior = a
     iteracion = 0
-    
     while iteracion < 100:
-    
-        x = b - (fb * (b - a)) / (fb - fa)
-        fx = f(x)
         
-        # Frena si es que la diferencia entre las derivadas es cercana al cero
-        if abs(fb - fa) < 1e-12:
-            return None
+        try:
+            fx_n = ec.evaluar_f(f,x_n)
+            fx_n1 = ec.evaluar_f(f,x_n1)
+
+            x = x_n - fx_n * ((x_n - x_n1)/(fx_n - fx_n1))
+            fx = ec.evaluar_f(f,x)
+
+            if abs(fx) < err:
+                return x
         
-        # Frena cuando el resultado es demasiado cercano al cero
-        if abs(fx) < 1e-12: 
-            return x
-            
-        # Cierra el ciclo cuando la diferencia entre cada iteración es minima
-        if abs(x - x_anterior) < err:
-            break
-            
-        # Opciones
-        if fx * fa < 0:
-            b = x
-            fb = fx
-        else:
-            a = x
-            fa = fx
-            
-        x_anterior = x
-        iteracion += 1
-        
-    return x''',
+            else:
+                x_n, x_n1 = x, x_n
+
+            iteracion+=1
+
+        except ZeroDivisionError:
+            print("División por 0. Probar con otros valores.")
+            return None''',
             "python")
+    
+    def get_rango_grafico(self, raiz, **params):
+        return raiz-5, raiz+5

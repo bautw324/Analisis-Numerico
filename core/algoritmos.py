@@ -66,7 +66,7 @@ def biseccion(f,a,b,err):
 
     return x, datos
 
-def secante(f,a,b,err):
+def regula_falsi(f,a,b,err):
     
     fa = ut.evaluar_f(f,a)
     fb = ut.evaluar_f(f,b)
@@ -129,7 +129,7 @@ def secante(f,a,b,err):
         
     return x, datos
 
-def newton(f,x_n,err):
+def newton(f,x_0,err):
     
     max_iters = st.session_state.get('max_iters',100)
     cero_maquina = st.session_state.get('cero_maquina', 1e-12)
@@ -138,6 +138,7 @@ def newton(f,x_n,err):
     datos = Historial({'x[i]','f(x[i])',"f'(x[i])",'x[i+1]',f'Error {tipo_err}'})
     
     # Variables útiles
+    x_n=x_0
     iteracion=0
     derivada = str(sp.diff(f, 'x'))
     
@@ -176,7 +177,7 @@ def newton(f,x_n,err):
         x_n=x_n1
         iteracion+=1
 
-def punto_fijo (g,x0,err):
+def punto_fijo(g,x_0,err):
     
     max_iters = st.session_state.get('max_iters',100)
     cero_maquina = st.session_state.get('cero_maquina', 1e-12)
@@ -185,18 +186,18 @@ def punto_fijo (g,x0,err):
     datos = Historial(['x[i]','g(x[i])',f'Error {tipo_err}'])
     
     # Variables útiles
-    x_actual=x0
+    x_n=x_0
     iteracion=0
     
     # Cálculo de la raíz
     while iteracion < max_iters:
         try:
-            x_nuevo = ut.evaluar_f(g, x_actual)
-            err_cal = ut.calcular_error(x_nuevo, x_actual)
+            x_n1 = ut.evaluar_f(g, x_n)
+            err_cal = ut.calcular_error(x_n1, x_n)
             
             datos.agregar({
-            'x[i]':x_actual,
-            'g(x[i])':x_nuevo,
+            'x[i]':x_n,
+            'g(x[i])':x_n1,
             f'Error {tipo_err}':err_cal
             })
     
@@ -205,9 +206,9 @@ def punto_fijo (g,x0,err):
                 return None, datos  # Divergió (devuelve None)
 
             if err_cal <= err:
-                return x_nuevo, datos  # Convergió (devuelve la raíz)
+                return x_n1, datos  # Convergió (devuelve la raíz)
             
-            x_actual = x_nuevo
+            x_n = x_n1
             
         except Exception:
             return None, datos # Explotó la matemática
@@ -216,7 +217,7 @@ def punto_fijo (g,x0,err):
         
     return None, datos # Llegó al límite de iteraciones sin converger
 
-def tangente(f,x_n1,x_n,err):
+def secante(f,x_n1,x_n,err):
     
     max_iters = st.session_state.get('max_iters',100)
     cero_maquina = st.session_state.get('cero_maquina', 1e-12)
@@ -262,29 +263,29 @@ def tangente(f,x_n1,x_n,err):
 
         except ZeroDivisionError:
             print("División por 0. Probar con otros valores.")
-            return None
+            return None, datos
 
-def calcular_regresion(x_vals,y_vals):
+def regresion(x_vals, y_vals):
     """
     Recibe listas normales de Python. Devuelve la pendiente (m), 
-    ordenada al origen (b), la raíz y el R^2.
+    ordenada al origen (b), la raíz, el R^2 y la instancia de Historial, datos.
     """
+    datos = Historial(['x', 'y'])
+    
     if len(x_vals) < 2 or len(x_vals) != len(y_vals):
-        return None, None, None, None
+        return None, None, None, None, datos
 
     try:
-        # Calculamos la recta
         m, b = statistics.linear_regression(x_vals, y_vals)
-        
-        # Calculamos qué tan bueno es el ajuste (R cuadrado)
         r = statistics.correlation(x_vals, y_vals)
         r2 = r ** 2
-        
-        raiz = None
-        if m != 0:
-            raiz = -b / m  # Despejamos X cuando Y = 0
-            
-        return m, b, raiz, r2
+        raiz = -b / m if m != 0 else None
+
+        for x, y in zip(x_vals, y_vals):
+            datos.agregar({'x': x, 'y': y})
+
+        return m, b, raiz, r2, datos
+
     except Exception:
-        return None, None, None, None
+        return None, None, None, None, datos
 
