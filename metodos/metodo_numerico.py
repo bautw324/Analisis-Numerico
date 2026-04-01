@@ -65,7 +65,18 @@ class MetodoNumerico(ABC):
         return f, err, exponente_err
     
     def mostrar_resultados(self, raiz, datos, grafico_f):
-        st.success(f'Raíz encontrada en: $x \\approx {raiz:.6f}$')
+        
+        datos_dict = datos.obtener_datos()
+        iteraciones = len(datos_dict['x[i]']) if 'x[i]' in datos_dict else None
+        
+        # Resultados con metricas
+        col1, col2 = st.columns(2)
+        with col1:
+            st.metric(label="✅ Raíz encontrada $(x)$", value=f"${raiz:.6f}$")
+        with col2:
+            if iteraciones is not None:
+                st.metric(label="🔄 Pasos (Iteraciones)", value=f'${iteraciones}$')
+                
         # Gráfico
         with st.spinner(text='Generando grafica...'):
             grafico.dibujar(grafico_f)
@@ -91,16 +102,15 @@ class MetodoNumerico(ABC):
         # --- 2. ZONA DE TEORÍA ---
         self.render_teoria()
         
-        
-        with st.container(border=True):
-            # Dividimos la pantalla: 1 parte para inputs, 2 partes para gráficos
-            col_input, col_result = st.columns([1, 2], gap="large")
+        # Dividimos la pantalla: 1 parte para inputs, 2 partes para gráficos
+        col_input, col_result = st.columns([1, 2], gap="large")
 
-            # --- 3. ZONA ENTRADA DE DATOS ---
-            with col_input:
+        # --- 3. ZONA ENTRADA DE DATOS ---
+        with col_input:
+            with st.container(border=True):
                 st.subheader("📥 Ingreso de datos")
                 f, err, exponente_err = self.render_formula()
-                 
+                
                 params = self.render_inputs(key=self.nombre)
                 
                 try:
@@ -135,13 +145,14 @@ class MetodoNumerico(ABC):
                     
             # --- 3. ZONA DE GRÁFICOS Y RESULTADOS ---
             with col_result:
-                # Verifica si existe la raíz antes de mostrar opciones adicionales
-                if 'raiz' in locals() and raiz is not None:
-                    self.mostrar_resultados(raiz=raiz,datos=datos,grafico_f=grafico_f)
-                        
-                else:
-                    if 'raiz' in locals():
-                        st.error('No se ha encontrado la raíz.')    
+                with st.container(border=True):
+                    # Verifica si existe la raíz antes de mostrar opciones adicionales
+                    if 'raiz' in locals() and raiz is not None:
+                        self.mostrar_resultados(raiz=raiz,datos=datos,grafico_f=grafico_f)
+                            
+                    else:
+                        if 'raiz' in locals():
+                            st.error('No se ha encontrado la raíz.')    
         st.divider()
         
         # --- 4. ZONA DEL CÓDIGO EN PYTHON ---

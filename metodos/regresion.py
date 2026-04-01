@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 from metodos.metodo_numerico import MetodoNumerico
 from core.algoritmos import regresion
-from core import grafico, utils as ut
+from core import grafico
 
 class Regresion(MetodoNumerico):
     
@@ -60,7 +60,7 @@ class Regresion(MetodoNumerico):
         return min(raiz, min(self._x_vals)) - 1, max(raiz, max(self._x_vals)) + 1
 
     def mostrar_resultados(self, raiz, datos, grafico_f):
-        st.success(f'Raíz encontrada en: $x \\approx {raiz:.6f}$')
+        st.metric(label="✅ Raíz encontrada $(x)$", value=f"${raiz:.6f}$")
         grafico.dibujar(grafico_f)
         with st.expander("📊 Ver métricas del modelo"):
             st.write(f"- **Pendiente ($m$):** `{self._m:.4f}`")
