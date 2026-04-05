@@ -1,0 +1,14 @@
+[theme]
+# Un cian eléctrico brillante. Llama muchísimo la atención sobre fondo oscuro.
+primaryColor = "#06b6d4" 
+
+# Un azul/gris casi negro, súper elegante (no es negro puro).
+backgroundColor = "#F0F8FF"
+
+# Un tono apenas más claro para diferenciar la barra lateral.
+secondaryBackgroundColor = "#1e293b" 
+
+# Texto blanco hueso para que no canse la vista.
+textColor = "#f8fafc" 
+font = "sans serif"
+base = "light"

@@ -1,0 +1,105 @@
+/* --- 1. FONDO GLOBAL CELESTE Y TEXTO OSCURO --- */
+.stApp, [data-testid="stAppViewContainer"] {
+    background-color: #F0F8FF !important; /* Celeste clarito */
+}
+
+[data-testid="stSidebar"] {
+    background-color: #f8fafc !important; 
+    border-right: 1px solid #e2e8f0 !important;
+}
+
+/* ☢️ REGLA ARREGLADA: Le sacamos el 'span' y el 'div' para no romper el código Python */
+.stApp p, .stApp label, .stApp li, .stApp h1, .stApp h2, .stApp h3, .stApp h4 {
+    color: #0f172a !important;
+}
+
+/* Excepción B: Código de Python (Solo el fondo oscuro, dejamos que Python pinte las letras) */
+div[data-testid="stCodeBlock"] {
+    background-color: #0f172a !important;
+    border-radius: 10px !important;
+    border: 1px solid #1e293b !important;
+}
+/* Le devolvemos la libertad a las letras del código */
+div[data-testid="stCodeBlock"] * {
+    color: inherit;
+}
+/* --- 2. EXCEPCIONES (DONDE EL TEXTO SÍ DEBE SER BLANCO) --- */
+
+/* Excepción A: Hero Banner de Inicio */
+.hero-banner {
+    background-color: #1a2b4c; 
+    border-radius: 15px; 
+    padding: 3rem; 
+    margin-bottom: 3rem; 
+    box-shadow: 0 10px 25px rgba(26,43,76,0.2);
+}
+.hero-banner p, .hero-banner span, .hero-banner h1, .hero-banner div, .curve-label {
+    color: #ffffff !important;
+}
+
+/* Excepción B: Código de Python (BLINDADO) */
+.stApp div[data-testid="stCodeBlock"] {
+    background-color: #0f172a !important;
+    border-radius: 10px !important;
+    border: 1px solid #1e293b !important;
+}
+
+/* El asterisco obliga a que CADA letra adentro del código sea blanca sí o sí */
+.stApp div[data-testid="stCodeBlock"] * {
+    color: #e2e8f0 !important; 
+}
+
+/* Excepción C: Botones (Calcular, etc.) */
+.stButton > button {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%) !important;
+    border: none !important;
+}
+.stButton > button p, .stButton > button span, .stButton > button div {
+    color: #ffffff !important;
+}
+
+/* Excepción D: Menú de Ajustes */
+div[data-testid="stPopoverBody"] {
+    background-color: #1e293b !important;
+}
+div[data-testid="stPopoverBody"] p, div[data-testid="stPopoverBody"] span, div[data-testid="stPopoverBody"] label, div[data-testid="stPopoverBody"] div {
+    color: #f8fafc !important;
+}
+div[data-testid="stPopoverBody"] svg {
+    fill: #f8fafc !important;
+    color: #f8fafc !important;
+}
+
+/* --- 3. EL GRÁFICO DEL BANNER --- */
+.curve-container {
+    position: relative; width: 100%; height: 180px;
+}
+.axis { position: absolute; background-color: rgba(255, 255, 255, 0.1) !important; }
+.axis-x { width: 100%; height: 1px; bottom: 0; }
+.axis-y { width: 1px; height: 100%; left: 10%; }
+.curve-line {
+    position: absolute; bottom: 20px; left: 10%; width: 80%; height: 120px;
+    border-bottom: 3px solid transparent; border-left: 3px solid transparent;
+    border-radius: 50% 50% 0 0; border-top: 3px solid #00A38C;
+}
+.point-dot {
+    position: absolute; width: 10px; height: 10px;
+    background-color: rgba(255, 255, 255, 0.4) !important; border-radius: 50%; border: 2px solid #FF6F91;
+}
+.root-dot {
+    position: absolute; width: 12px; height: 12px;
+    background-color: #00A38C !important; border-radius: 50%; box-shadow: 0 0 10px rgba(0, 163, 140, 0.8) !important;
+}
+.dot-1 { bottom: 80px; left: 15%; }
+.dot-2 { bottom: 50px; left: 25%; }
+.dot-3 { bottom: 100px; left: 50%; }
+.dot-4 { bottom: 60px; left: 65%; }
+.curve-label { position: absolute; font-size: 0.7rem; }
+.label-root { bottom: 120px; left: 45%; }
+.label-iterations { bottom: 95px; left: 18%; }
+/* --- 6. FÓRMULAS MATEMÁTICAS (LATEX) --- */
+/* Forzamos a que todas las fórmulas se pinten de azul oscuro */
+.stApp .katex, 
+.stApp .katex * {
+    color: #1a2b4c !important;
+}

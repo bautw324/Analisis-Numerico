@@ -1,196 +1,108 @@
 import streamlit as st
-import json
-
-# Intenta importar streamlit_lottie, si no está, no rompe la app
-try:
-    from streamlit_lottie import st_lottie
-    LOTTIE_DISPONIBLE = True
-except ImportError:
-    LOTTIE_DISPONIBLE = False
-
-def cargar_lottie_local(ruta_archivo: str):
-    with open(ruta_archivo, "r", encoding="utf-8") as f:
-        return json.load(f)
 
 def inicio():
-    # --- CSS MÁGICO PARA LAS TARJETAS CON HOVER ---
-    estilos_css = """
-    <style>
-    .feature-card {
-        background-color: rgba(40, 44, 52, 0.4);
-        border: 2px solid #3d434f;
-        border-radius: 12px;
-        padding: 20px;
-        transition: all 0.3s ease-in-out;
-        height: 100%;
-        color: #e0e0e0;
-        user-select: none; 
-    }
-    .feature-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 10px 25px rgba(52, 152, 219, 0.4);
-        border-color: #3498DB;
-    }
-    .feature-card h4 {
-        color: #3498DB;
-        margin-top: 0;
-        font-weight: 700;
-    }
-    .competencia-box {
-        background-color: rgba(231, 76, 60, 0.1);
-        border-left: 4px solid #E74C3C;
-        padding: 15px;
-        border-radius: 0 8px 8px 0;
-        margin-top: 20px;
-    }
-    </style>
-    """
-    st.markdown(estilos_css, unsafe_allow_html=True)
-    st.write("")
+    # --- 1. HERO BANNER (CON ANIMACIONES SÚPER PRO) ---
+    html_hero = """
+<style>
+@keyframes pulso_raiz {
+    0% { box-shadow: 0 0 0 0 rgba(0, 163, 140, 0.7); }
+    70% { box-shadow: 0 0 0 15px rgba(0, 163, 140, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 163, 140, 0); }
+}
+@keyframes flotar {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+    100% { transform: translateY(0px); }
+}
+</style>
+
+<div class="hero-banner" style="background-color: #1a2b4c; border-radius: 15px; padding: 3rem; margin-bottom: 3rem; box-shadow: 0 10px 25px rgba(26,43,76,0.2); display: flex; flex-direction: row; justify-content: space-between; align-items: center; gap: 2rem; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 300px;">
+        <span style="background-color: rgba(255,255,255,0.1); color: #ffffff !important; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; display: inline-block; margin-bottom: 15px;">VERSIÓN 2.0 ESTABLE 🚀</span>
+        <h1 style="color: #ffffff !important; font-size: 3.5rem; margin: 0 0 10px 0; font-weight: 800; line-height: 1.1; letter-spacing: -1px;">Σ ROOOTY LAB</h1>
+        <p style="color: #cbd5e1 !important; font-size: 1.1rem; line-height: 1.5; margin: 0;">Tu plataforma corporativa de Análisis Numérico diseñada para la precisión y el aprendizaje paso a paso.</p>
+    </div>
+    <div style="flex: 1; min-width: 300px; padding: 1.5rem; background-color: rgba(255,255,255,0.03); border-radius: 12px; position: relative; animation: flotar 4s ease-in-out infinite;">
+        <div class="curve-container" style="position: relative; width: 100%; height: 180px;">
+            <div style="position: absolute; width: 100%; height: 1px; bottom: 0; background-color: rgba(255,255,255,0.1);"></div>
+            <div style="position: absolute; width: 1px; height: 100%; left: 10%; background-color: rgba(255,255,255,0.1);"></div>
+            <div style="position: absolute; bottom: 20px; left: 10%; width: 80%; height: 120px; border-bottom: 3px solid transparent; border-left: 3px solid transparent; border-radius: 50% 50% 0 0; border-top: 3px solid #00A38C;"></div>
+            <div style="position: absolute; width: 10px; height: 10px; background-color: rgba(255,255,255,0.4); border-radius: 50%; border: 2px solid #FF6F91; bottom: 80px; left: 15%;"></div>
+            <div style="position: absolute; width: 10px; height: 10px; background-color: rgba(255,255,255,0.4); border-radius: 50%; border: 2px solid #FF6F91; bottom: 50px; left: 25%;"></div>
+            <div style="position: absolute; width: 10px; height: 10px; background-color: rgba(255,255,255,0.4); border-radius: 50%; border: 2px solid #FF6F91; bottom: 60px; left: 65%;"></div>
+            <div style="position: absolute; width: 14px; height: 14px; background-color: #00A38C; border-radius: 50%; bottom: 100px; left: 50%; transform: translate(-50%, 50%); animation: pulso_raiz 2s infinite;"></div>
+            <span style="position: absolute; font-size: 0.75rem; color: #ffffff !important; bottom: 120px; left: 45%;">Raíz Calculada</span>
+            <span style="position: absolute; font-size: 0.7rem; color: #cbd5e1 !important; bottom: 95px; left: 18%;">Iteraciones</span>
+        </div>
+    </div>
+</div>
+"""
+    st.markdown(html_hero, unsafe_allow_html=True)
     
-    lottie_welcome = cargar_lottie_local("animaciones/Welcome.json")
-    st.markdown('<div style="display: flex; justify-content: center;">', unsafe_allow_html=True)
-    if lottie_welcome:
-        
-        st_lottie(
-            lottie_welcome,
-            speed=1,
-            reverse=False,
-            loop=True,
-            quality="low",
-            height=200, 
-            width=None, 
-            key="large_welcome_animation",
-        )
-
-    # Centramos el texto con etiquetas HTML
-    st.markdown("<h1 style='text-align: center; font-size: 4.5rem; margin-bottom: 0; line-height: 1.1;'><i>Roooty </i><span style='color: #3498DB;'>🚀</span></h1>", unsafe_allow_html=True)
-    st.markdown("<h3 style='text-align: center; color: #bdc3c7; margin-top: 10px;'>Tu laboratorio interactivo de Análisis Numérico</h3>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; font-size: 1.1rem; color: #a0aab5; max-width: 800px; margin: 0 auto;'>Olvidate de hacer iteraciones a mano en papel. Roooty automatiza, grafica y compara los algoritmos matemáticos más potentes para encontrar raíces de funciones no lineales en milisegundos.</p>", unsafe_allow_html=True)
-
-    st.write("")
-    st.write("")
-    st.divider()
-
-    # --- 2. SUPERPODERES (Con CSS Hover) ---
-    st.markdown("### ✨ ¿Qué hace especial a Roooty?")
-    st.write("")
+    # --- 2. POR QUÉ ELEGIR ROOOTY ---
+    st.markdown("<h2 style='text-align: center; color: #1a2b4c; font-weight: 800;'>¿Por qué elegir Roooty?</h2>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; color: #64748b; margin-bottom: 2rem;'>Elevamos el estándar del análisis numérico académico frente a las herramientas tradicionales.</p>", unsafe_allow_html=True)
     
     c1, c2, c3 = st.columns(3)
+    with c1: st.info("#### 📑 Paso a paso gratis\nEllos te cobran la suscripción PRO para ver el 'paso a paso'. Roooty te da la tabla de iteraciones completa y el error de forma **totalmente gratis**.")
+    with c2: st.success("#### 🎯 Aritmética finita\nNo permitimos errores mágicos. Simula aritmética finita (truncamiento) y maneja el número de cifras significativas (K) a tu gusto.")
+    with c3: st.warning("#### 📄 Reportes Académicos\nOlvidate de arrastrar celdas en Excel. Ingresa la función, toca un botón y tenés tu PDF profesional listo para entregar en el TP.")
+
+    st.markdown("<br><hr style='border-top: 1px solid #e2e8f0;'><br>", unsafe_allow_html=True)
+
+    # --- 3. TABLA COMPARATIVA ---
+    st.markdown("<h3 style='color: #1a2b4c;'>Tabla Comparativa</h3>", unsafe_allow_html=True)
+    html_tabla = """
+        <table style="width:100%; text-align: left; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+            <tr style="border-bottom: 2px solid #e2e8f0; color: #64748b; font-size: 0.8rem; background-color: #f8fafc;">
+                <th style="padding: 15px;">CARACTERÍSTICA</th><th style="padding: 15px;">WOLFRAMALPHA</th><th style="padding: 15px;">EXCEL / GEOGEBRA</th><th style="padding: 15px; color: #1a2b4c;">ROOOTY</th>
+            </tr>
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+                <td style="padding: 15px; color: #1e293b;">Pasos de iteración</td><td style="padding: 15px; color: #ef4444;">Pago (Pro)</td><td style="padding: 15px; color: #64748b;">Limitado / Manual</td><td style="padding: 15px; font-weight: bold; color: #1a2b4c;">Gratis & Ilimitado</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+                <td style="padding: 15px; color: #1e293b;">Aritmética Finita</td><td style="padding: 15px; color: #64748b;">Automático</td><td style="padding: 15px; color: #64748b;">Estándar Rígido</td><td style="padding: 15px; font-weight: bold; color: #1a2b4c;">Configurable (K bits)</td>
+            </tr>
+            <tr>
+                <td style="padding: 15px; color: #1e293b;">Exportación Directa</td><td style="padding: 15px; color: #64748b;">Solo imagen</td><td style="padding: 15px; color: #64748b;">Manual / Formatos fijos</td><td style="padding: 15px; font-weight: bold; color: #1a2b4c;">PDF Dinámico</td>
+            </tr>
+        </table>
+    """
+    st.markdown(html_tabla, unsafe_allow_html=True)
+    st.markdown("<br><br>", unsafe_allow_html=True)
+
+    # --- 4. ARSENAL NUMÉRICO ---
+    st.markdown("<h2 style='text-align: center; color: #1a2b4c; font-weight: 800;'>🎛️ Nuestro Arsenal Numérico</h2>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; color: #64748b; margin-bottom: 2rem;'>Explorá los algoritmos disponibles en el menú de navegación izquierdo.</p>", unsafe_allow_html=True)
     
-    with c1:
-        st.markdown("""
-        <div class="feature-card">
-            <h4>🎯 Precisión Dinámica</h4>
-            <p>Controlá la tolerancia al milímetro. Simulá aritmética finita y configurá el <i>cero máquina</i> a tu gusto para ver cómo explotan (o sobreviven) los métodos.</p>
+    colA, colB = st.columns(2)
+    with colA:
+        st.markdown("<b style='color: #475569;'>🔒 MÉTODOS CERRADOS</b>", unsafe_allow_html=True)
+        st.markdown("""<div style='border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px; margin-bottom: 15px; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.02);'><b style='color:#1a2b4c; font-size: 1.1rem;'>Bisección</b><br><span style='color:#64748b; font-size: 0.9rem;'>El viejo y confiable. Encierra la raíz en un intervalo y lo parte a la mitad.</span></div>""", unsafe_allow_html=True)
+        st.markdown("""<div style='border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.02);'><b style='color:#1a2b4c; font-size: 1.1rem;'>Regula Falsi</b><br><span style='color:#64748b; font-size: 0.9rem;'>Aproximación lineal más rápida que la bisección manteniendo convergencia.</span></div>""", unsafe_allow_html=True)
+    with colB:
+        st.markdown("<b style='color: #475569;'>⚡ MÉTODOS ABIERTOS</b>", unsafe_allow_html=True)
+        st.markdown("""<div style='border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px; margin-bottom: 15px; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.02);'><b style='color:#1a2b4c; font-size: 1.1rem;'>Newton-Raphson</b><br><span style='color:#64748b; font-size: 0.9rem;'>Dominador absoluto de los bucles con convergencia cuadrática.</span></div>""", unsafe_allow_html=True)
+        st.markdown("""<div style='border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.02);'><b style='color:#1a2b4c; font-size: 1.1rem;'>Secante</b><br><span style='color:#64748b; font-size: 0.9rem;'>Variante de Newton sin necesidad de derivar analíticamente.</span></div>""", unsafe_allow_html=True)
+
+    st.markdown("<br><hr style='border-top: 1px solid #e2e8f0;'><br>", unsafe_allow_html=True)
+
+    # --- 5. EL ESCUADRÓN ---
+    st.markdown("<h3 style='text-align: center; color: #1a2b4c;'>👥 El Escuadrón detrás del Código</h3>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; color: #64748b;'>Este proyecto fue desarrollado con sangre, sudor, matemáticas y mucho café por estas leyendas:</p>", unsafe_allow_html=True)
+    
+    html_escuadron = """
+        <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; text-align: center; margin-top: 30px;">
+            <div><div style="background:#1e293b; color:white; width:60px; height:60px; border-radius:50%; line-height:60px; margin:0 auto; font-weight:bold; font-size: 1.1rem;">BG</div><span style='color:#1e293b; font-size: 0.8rem;'><b>Bautista</b></span></div>
+            <div><div style="background:#e0f2fe; color:#0284c7; width:60px; height:60px; border-radius:50%; line-height:60px; margin:0 auto; font-weight:bold; font-size: 1.1rem;">IG</div><span style='color:#1e293b; font-size: 0.8rem;'><b>Ignacio</b></span></div>
+            <div><div style="background:#f3e8ff; color:#9333ea; width:60px; height:60px; border-radius:50%; line-height:60px; margin:0 auto; font-weight:bold; font-size: 1.1rem;">JG</div><span style='color:#1e293b; font-size: 0.8rem;'><b>Juan</b></span></div>
+            <div><div style="background:#ffedd5; color:#ea580c; width:60px; height:60px; border-radius:50%; line-height:60px; margin:0 auto; font-weight:bold; font-size: 1.1rem;">TK</div><span style='color:#1e293b; font-size: 0.8rem;'><b>Trini</b></span></div>
+            <div><div style="background:#dcfce7; color:#16a34a; width:60px; height:60px; border-radius:50%; line-height:60px; margin:0 auto; font-weight:bold; font-size: 1.1rem;">BR</div><span style='color:#1e293b; font-size: 0.8rem;'><b>Brisa</b></span></div>
+            <div><div style="background:#f1f5f9; color:#475569; width:60px; height:60px; border-radius:50%; line-height:60px; margin:0 auto; font-weight:bold; font-size: 1.1rem;">MV</div><span style='color:#1e293b; font-size: 0.8rem;'><b>Micaías</b></span></div>
+            <div><div style="background:#fef9c3; color:#ca8a04; width:60px; height:60px; border-radius:50%; line-height:60px; margin:0 auto; font-weight:bold; font-size: 1.1rem;">MM</div><span style='color:#1e293b; font-size: 0.8rem;'><b>Manuel</b></span></div>
         </div>
-        """, unsafe_allow_html=True)
-        
-    with c2:
-        st.markdown("""
-        <div class="feature-card">
-            <h4>🥊 Arena de Batalla</h4>
-            <p>Enfrentá a Newton contra la Secante en la sección de <b>Comparación</b>. Medí el tiempo de ejecución, cantidad de iteraciones y descubrí quién es el rey.</p>
-        </div>
-        """, unsafe_allow_html=True)
-        
-    with c3:
-        st.markdown("""
-        <div class="feature-card">
-            <h4>📄 Reportes Premium</h4>
-            <p>Con un solo clic, exportá un PDF profesional con la gráfica, la tabla de iteraciones detallada y todos los parámetros de tu cálculo. Ideal para el TP.</p>
-        </div>
-        """, unsafe_allow_html=True)
-
-    st.write("")
-    st.write("")
-    st.divider()
-
-    # --- 3. EL ARSENAL NUMÉRICO Y LA COMPETENCIA ---
-    st.markdown("### 🧮 Nuestro Arsenal Numérico")
-    st.write("Explorá los algoritmos disponibles en el menú de navegación izquierdo:")
+    """
+    st.markdown(html_escuadron, unsafe_allow_html=True)
+    st.markdown("<br><br>", unsafe_allow_html=True)
     
-    tab1, tab2, tab3 = st.tabs(["🔒 Métodos Cerrados", "⚡ Métodos Abiertos", "📈 Regresión"])
-    
-    with tab1:
-        st.success("**Bisección:** El viejo y confiable. Encierra la raíz en un intervalo y lo parte a la mitad. Lento pero 100% seguro (siempre que haya cambio de signo).")
-    with tab2:
-        st.info("**Newton-Raphson:** Usa derivadas para trazar tangentes. Un Fórmula 1 matemático.\n\n**Secante / Tangente:** Aproxima la derivada usando puntos anteriores.\n\n**Punto Fijo:** Transforma la función y busca el punto de cruce con la identidad.")
-    with tab3:
-        st.warning("**Regresión Lineal:** Ajusta la mejor recta posible a una nube de puntos experimentales utilizando el método de mínimos cuadrados.")
-
-    # Tiradera a la competencia
-    st.markdown("""
-    <div class="competencia-box">
-        <h4 style="margin-top: 0; color: #E74C3C;">🔥 ¿Por qué aplastamos a la competencia?</h4>
-        <ul style="margin-bottom: 0;">
-            <li><b>vs. WolframAlpha / Symbolab:</b> Ellos te cobran la suscripción PRO para ver el "paso a paso". Roooty te da la tabla de iteraciones completa y el error de propagación <b>totalmente gratis</b>.</li>
-            <li><b>vs. GeoGebra:</b> Grafica lindo, pero no te permite simular aritmética finita (truncamiento) ni enfrentar dos algoritmos cara a cara con métricas de rendimiento.</li>
-            <li><b>vs. Excel:</b> Olvidate de arrastrar celdas y romper fórmulas. En Roooty ingresás la función, tocás un botón y tenés tu PDF listo para entregar.</li>
-        </ul>
-    </div>
-    """, unsafe_allow_html=True)
-
-    st.write("")
-    st.divider()
-
-    # --- 4. EL EQUIPO (Integrantes) ---
-    st.markdown("### 👨‍💻 El Escuadrón detrás del Código")
-    st.write("Este proyecto fue desarrollado con sangre, sudor, matemáticas y mucho café por estas 7 leyendas:")
-    st.write("")
-    
-    # Primera fila: 4 integrantes
-    f1_1, f1_2, f1_3, f1_4 = st.columns(4)
-    
-    with f1_1:
-        st.markdown("#### 🧑‍🚀 Bautista Genovese")
-        st.caption("Rol: Arquitecto de Software")
-        st.write("Encargado de la refactorización extrema y de pelear mano a mano con la librería de Plotly.")
-        
-    with f1_2:
-        st.markdown("#### 🕵️‍♂️ Ignacio Giangrieco")
-        st.caption("Rol: Maestro de Algoritmos")
-        st.write("Dominador absoluto de los bucles `while` y cazador implacable de divisiones por cero.")
-        
-    with f1_3:
-        st.markdown("#### 🧞‍♂️ Juan Giron")
-        st.caption("Rol: Recolector de ideas")
-        st.write("Es el puente que organiza y traduce esas chispas sueltas en la base sólida de un nuevo proyecto.")
-        
-    with f1_4:
-        st.markdown("#### 🎨 Trini Kildegaard")
-        st.caption("Rol: UX/UI & CSS Ninja")
-        st.write("El artista. Si la app se ve fachera y no te quema los ojos, es gracias a su magia.")
-
-    st.write("") # Espaciador entre filas
-    
-    # Segunda fila: 3 integrantes
-    f2_1, f2_2, f2_3 = st.columns(3)
-    
-    with f2_1:
-        st.markdown("#### 🧉 Brisa Romero")
-        st.caption("Rol: Scrum Master & Mates")
-        st.write("Líder espiritual. Mantuvo la moral alta y el termo siempre lleno en las madrugadas de código.")
-        
-    with f2_2:
-        st.markdown("#### 🧙‍♂️ Micaías Villa")
-        st.caption("Rol: Git Master & DevOps")
-        st.write("El salvador de los *merge conflicts*. Su único miedo es que no compile en la PC del profe.")
-        
-    with f2_3:
-        st.markdown("#### 🧠 Manuel Montoya")
-        st.caption("Rol: Criptógrafo Matemático")
-        st.write("Traductor oficial. El único capaz de descifrar qué pedía realmente la cátedra en el PDF.")
-
-    st.write("")
-    st.write("")
-    
-    # --- 5. ZONA DE ADVERTENCIA TÉCNICA ---
-    st.warning(
-        "**Tip de Supervivencia:** Recuerda que los métodos abiertos (como Newton o Punto Fijo) no garantizan la convergencia. "
-        "Si la app te dice que el método divergió, no te asustes: intenta cambiar tu $x_0$ inicial o el límite de divergencia en la ⚙️ Configuración Global.",
-        icon="💡"
-    )
-
-if __name__ == '__main__':
-    inicio()
+    st.error("💡 **TIP DE SUPERVIVENCIA**\nRecuerda que los métodos abiertos no garantizan la convergencia. Si la app te dice que el método divergió, no te asustes: intenta cambiar tu valor inicial o revisa la Configuración Global.")
